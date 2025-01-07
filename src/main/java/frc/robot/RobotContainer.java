@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -24,18 +25,16 @@ public class RobotContainer {
   }
 
   public void setDriveCommand() {
-      m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-          () -> m_robotDrive.drive(
-            -MathUtil.applyDeadband(rightJoystick.getY(), OIConstants.kDriveDeadband),
-            -MathUtil.applyDeadband(rightJoystick.getX(), OIConstants.kDriveDeadband),
-            -MathUtil.applyDeadband(leftJoystick.getZ(), OIConstants.kDriveDeadband),
-            true, true, true),
-          m_robotDrive
-        )
-      ); // Call of duty (:<
+    m_robotDrive.setDefaultCommand(
+      new RunCommand(
+        () -> m_robotDrive.drive(
+          -MathUtil.applyDeadband(rightJoystick.getY(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(rightJoystick.getX(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(leftJoystick.getZ(), OIConstants.kDriveDeadband),
+          true, true, true),
+        m_robotDrive 
+      )
+    ); // Call of duty (:<
   }
   
   private void configureBindings() {
