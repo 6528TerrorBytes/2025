@@ -20,14 +20,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.ADIS16470_IMU;
 // import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 // Gyro NAVX:
-import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.studica.frc.AHRS; // EXAMPLE NAVX CODE: https://pdocs.kauailabs.com/navx-mxp/examples/rotate-to-angle-2/ and https://www.chiefdelphi.com/t/navx-vendordeps/478142/3
+import com.studica.frc.AHRS.NavXComType;
+import com.pathplanner.lib.auto.AutoBuilder; // Pathplanner: https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.config.PIDConstants;
 
 import frc.utils.SwerveUtils;
-import frc.robot.Constants;
 import frc.robot.Utility;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -61,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase {
   );
 
   // The gyro sensor
-  private final AHRS m_gyro = new AHRS();
+  private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI); // (May need to change this: NavXUpdateRate.k200Hz)
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -97,18 +97,29 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putData("Field", m_field);
     
     // Auton setup for PathPlanner, see https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
-    AutoBuilder.configureHolonomic(
+
+    // might not work :)
+    RobotConfig config;
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+
+      // Default, if not setup within Pathplanner's settings already
+      config = new RobotConfig(74.088, 6.883, null);
+    }
+
+    AutoBuilder.configure(
       this::getPose,
-      this::resetOdometry, 
+      this::resetOdometry,
       this::getRobotRelativeSpeeds,
-      this::driveRobotRelative,
-      new HolonomicPathFollowerConfig(
-        new PIDConstants(2.5), // Translation PID
-        new PIDConstants(4), // Rotation PID
-        Constants.DriveConstants.kMaxSpeedMetersPerSecond, // Max speed m/s
-        0.47625, // Robot radius, distance from center to furthest module
-        new ReplanningConfig(true, true)
+      (speeds, forwards) -> driveRobotRelative(speeds),
+      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
       ),
+      config,
       Utility::teamColorIsRed,
       this
     );
