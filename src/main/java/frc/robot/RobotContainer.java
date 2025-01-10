@@ -5,9 +5,11 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,16 +18,22 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class RobotContainer {
+  // Joysticks
   public final Joystick leftJoystick = new Joystick(0);
   public final Joystick rightJoystick = new Joystick(1);
+  public final Joystick otherJoystick = new Joystick(3);
 
+  private SendableChooser<String> m_pathPlannerChooser = new SendableChooser<String>();
+  private Field2d m_field;
+
+  // Subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   
-  private SendableChooser<String> m_pathPlannerChooser = new SendableChooser<String>();
 
   public RobotContainer() {
     registerPathplannerCommands();
     setupPathplannerSelector();
+    setPathplannerFieldWidget();
 
     setDriveCommand();
     configureControllerBindings();
@@ -46,6 +54,17 @@ public class RobotContainer {
   
   private void configureControllerBindings() {
 
+  }
+
+  private void setPathplannerFieldWidget() {
+    m_field = new Field2d();
+    SmartDashboard.putData("Field", m_field);
+
+    // IDK if this works lol
+    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+      // Do whatever you want with the pose here
+      m_field.getObject("target pose").setPose(pose);
+    });
   }
 
   private void registerPathplannerCommands() {
