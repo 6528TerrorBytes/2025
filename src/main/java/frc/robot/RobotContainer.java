@@ -13,8 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DriveSpeedChange;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class RobotContainer {
@@ -43,9 +46,9 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(
       new RunCommand(
         () -> m_robotDrive.drive(
-          -MathUtil.applyDeadband(rightJoystick.getY(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(rightJoystick.getX(), OIConstants.kDriveDeadband),
-          -MathUtil.applyDeadband(leftJoystick.getZ(), OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(Math.pow(rightJoystick.getY(), 1) / 2, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(Math.pow(rightJoystick.getX(), 1) / 2, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(Math.pow(leftJoystick.getZ(),  1) / 2, OIConstants.kDriveDeadband),
           true, true, true),
         m_robotDrive 
       )
@@ -53,7 +56,10 @@ public class RobotContainer {
   }
   
   private void configureControllerBindings() {
-
+    new JoystickButton(rightJoystick, 2).whileTrue(new DriveSpeedChange(0.5));
+    
+    // Reset gyro
+    new JoystickButton(leftJoystick, 11).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
   }
 
   private void setPathplannerFieldWidget() {

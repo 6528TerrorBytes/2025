@@ -320,11 +320,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  /** Zeroes the heading of the robot. */
-  public void zeroHeading() {
-    m_navX.reset();
-  }
-
   /**
    * Returns the heading of the robot.
    *
