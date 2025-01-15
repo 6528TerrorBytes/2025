@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -25,11 +26,13 @@ import com.studica.frc.AHRS.NavXComType;
 import com.pathplanner.lib.auto.AutoBuilder; // Pathplanner: https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.config.PIDConstants;
 
 import frc.utils.SwerveUtils;
 import frc.robot.Utility;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import frc.robot.subsystems.MAXSwerveModule;
@@ -77,11 +80,12 @@ public class DriveSubsystem extends SubsystemBase {
   public static boolean overrideRotation = false;
   public static double newRotation = 0;
 
-  // Field object for SmartDashboard or Glass
+  // Field object for Shuffleboard
   private final Field2d m_field = new Field2d();
 
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  // https://first.wpi.edu/wpilib/allwpilib/docs/beta/java/edu/wpi/first/math/estimator/SwerveDrivePoseEstimator.html
+  SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics,
     Rotation2d.fromDegrees(getAngle()),
     new SwerveModulePosition[] {
@@ -89,12 +93,23 @@ public class DriveSubsystem extends SubsystemBase {
       m_frontRight.getPosition(),
       m_rearLeft.getPosition(),
       m_rearRight.getPosition()
-    }
+    },
+    new Pose2d(),
+
+    // TUNING THESE STANDARD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
+    // Making these too low will result in jittery pose estimation (see Smartdashboard for pose estimation location),
+    // Whereas too high will result in the pose not adjusting for vision data quick enough. Adjust these as needed
+    VecBuilder.fill(0.1, 0.1, 0.1), // x, y, rotation for encoder pos (I think)
+    VecBuilder.fill(0.9, 0.9, 0.9)  // x, y, rotation for vision data
   );
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    SmartDashboard.putData("Field", m_field);
+    // Displayed pathplanner path on the field perhaps
+    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+      // Do whatever you want with the pose here
+      m_field.getObject("target pose").setPose(pose);
+    });
     
     // Auton setup for PathPlanner, see https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 
@@ -132,8 +147,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    System.out.println("Drive train periodic is running (this println is for Pathplanner Apriltag pose estimation testing)");
+
     // Update the odometry in the periodic block
-    m_odometry.update(
+    m_odometry.updateWithTime(
+      Utility.getMatchTime(),
       Rotation2d.fromDegrees(getAngle()),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
@@ -143,8 +161,30 @@ public class DriveSubsystem extends SubsystemBase {
       }
     );
 
+    // Add vision measurement to odometry calculation if an AprilTag is visible
+    // Example: https://www.chiefdelphi.com/t/introducing-megatag2-by-limelight-vision/461243
+    // Documetation: https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
+    //               https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization-megatag2#using-wpilibs-pose-estimator
+    if (Utility.aprilTagInView()) {
+      System.out.println("Incorporating april tag data...");
+
+      Utility.setRobotOrientation(getAngle()); // MAY NEED TO CHANGE BASED ON COLOR (Because the function says the angle must be 0 degrees = facing red wall)
+
+      PoseEstimate poseEstimate = Utility.getRobotFieldPose();
+
+      // Decrease the first and second numbers to trust limelight data more
+      // TUNING STD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
+      // Making these too low will result in jittery pose estimation, too high results in not adjusting for vision data too quickly. Adjust as needed
+      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
+      m_odometry.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+    }
+  }
+
+  public void updateSmartDashboard() {
     // Update SmartDashboard field position
     m_field.setRobotPose(getPose());
+
+    SmartDashboard.putData("Drive Subsystem Field", m_field);
   }
 
   /**
@@ -161,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_odometry.getEstimatedPosition();
   }
 
   /**
@@ -339,6 +379,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetGyro() {
+    resetOdometry(getPose()); // TEST if necessary - https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
     m_navX.reset();
   }
 

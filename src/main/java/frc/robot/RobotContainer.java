@@ -5,11 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,8 +25,6 @@ public class RobotContainer {
   public final Joystick otherJoystick = new Joystick(3);
 
   private SendableChooser<String> m_pathPlannerChooser = new SendableChooser<String>();
-  private Field2d m_field;
-
   // Subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   
@@ -36,7 +32,6 @@ public class RobotContainer {
   public RobotContainer() {
     registerPathplannerCommands();
     setupPathplannerSelector();
-    setPathplannerFieldWidget();
 
     setDriveCommand();
     configureControllerBindings();
@@ -62,17 +57,6 @@ public class RobotContainer {
     new JoystickButton(leftJoystick, 11).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
   }
 
-  private void setPathplannerFieldWidget() {
-    m_field = new Field2d();
-    SmartDashboard.putData("Field", m_field);
-
-    // IDK if this works lol
-    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-      // Do whatever you want with the pose here
-      m_field.getObject("target pose").setPose(pose);
-    });
-  }
-
   private void registerPathplannerCommands() {
     // register pathplanner commands here when we get there
   }
@@ -96,5 +80,10 @@ public class RobotContainer {
     }
 
     return new PathPlannerAuto(selectedAuto);
+  }
+
+  public void updateSmartDashboard() {
+    m_robotDrive.updateSmartDashboard();
+    SmartDashboard.putBoolean("April Tag In View", Utility.aprilTagInView());
   }
 }
