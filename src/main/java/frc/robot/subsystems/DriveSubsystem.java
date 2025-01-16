@@ -77,9 +77,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   public static double speedMultiplier = 1;
 
-  public static boolean overrideRotation = false;
-  public static double newRotation = 0;
-
   // Field object for Shuffleboard
   private final Field2d m_field = new Field2d();
 
@@ -87,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
   // https://first.wpi.edu/wpilib/allwpilib/docs/beta/java/edu/wpi/first/math/estimator/SwerveDrivePoseEstimator.html
   SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics,
-    Rotation2d.fromDegrees(getAngle()),
+    Rotation2d.fromDegrees(getRawAngle()),
     new SwerveModulePosition[] {
       m_frontLeft.getPosition(),
       m_frontRight.getPosition(),
@@ -141,8 +138,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // Get total accumulated NavX Yaw in degrees
-  public double getAngle() {
+  public double getRawAngle() {
     return -m_navX.getAngle();
+  }
+
+  // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)
+  public double getAngleBlueSide() {
+    return getRawAngle() + (Utility.teamColorIsRed() ? 180 : 0);
   }
 
   @Override
@@ -152,7 +154,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Update the odometry in the periodic block
     m_odometry.updateWithTime(
       Utility.getMatchTime(),
-      Rotation2d.fromDegrees(getAngle()),
+      Rotation2d.fromDegrees(getAngleBlueSide()),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
@@ -168,7 +170,9 @@ public class DriveSubsystem extends SubsystemBase {
     if (Utility.aprilTagInView()) {
       System.out.println("Incorporating april tag data...");
 
-      Utility.setRobotOrientation(getAngle()); // MAY NEED TO CHANGE BASED ON COLOR (Because the function says the angle must be 0 degrees = facing red wall)
+      // MAY NEED TO CHANGE BASED ON COLOR (Because the function says the angle must be 0 degrees = facing red wall)
+      // Fixed? Perchance.
+      Utility.setRobotOrientation(getAngleBlueSide());
 
       PoseEstimate poseEstimate = Utility.getRobotFieldPose();
 
@@ -211,7 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-      Rotation2d.fromDegrees(getAngle()),
+      Rotation2d.fromDegrees(getAngleBlueSide()),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
@@ -233,7 +237,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, boolean multSpeed) {
-    SmartDashboard.putNumber("Gyro angle", getAngle());
+    SmartDashboard.putNumber("Gyro angle", getRawAngle());
 
     if (multSpeed) {
       // Speed multiplier
@@ -241,11 +245,7 @@ public class DriveSubsystem extends SubsystemBase {
       ySpeed *= speedMultiplier;
       rot *= speedMultiplier;
     }
-
-    if (overrideRotation) {
-      rot = newRotation;
-    }
-
+    
     double xSpeedCommanded;
     double ySpeedCommanded;
 
@@ -306,7 +306,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getAngle()))
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getRawAngle())) // Replace with angleBlue?
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     
     setModuleStates(swerveModuleStates);
@@ -360,27 +360,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  /**
-   * Returns the heading of the robot.
-   *
-   * @return the robot's heading in degrees, from -180 to 180
-   */
-  public double getHeading() {
-    return Rotation2d.fromDegrees(getAngle()).getDegrees();
-  }
-
-  /**
-   * Returns the raw gyro.getAngle() value.
-   * 
-   * @return the raw gyro angle from the lib.
-   */
-  public double getRawAngle() {
-    return getAngle();
-  }
-
   public void resetGyro() {
-    resetOdometry(getPose()); // TEST if necessary - https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
     m_navX.reset();
+    
+    // TEST if necessary - https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html#resetting-the-robot-pose
+    resetOdometry(getPose());
   }
 
   /**

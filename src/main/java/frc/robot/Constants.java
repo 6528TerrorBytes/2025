@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -9,6 +10,15 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 public final class Constants {
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+  public static final class AprilTags {
+    public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
+    public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
+
+    // TODO
+    public static final Pose2d coralPoseOffsetRightSide = new Pose2d();
+    public static final Pose2d coralPoseOffsetLeftSide = new Pose2d();
   }
 
   // EVERYTHING BELOW WAS COPIED FROM https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Constants.java
