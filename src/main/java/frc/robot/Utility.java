@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -51,5 +53,23 @@ public final class Utility {
 
   public static Pose2d getTagPoseRelativeToBot() {
     return LimelightHelpers.getTargetPose3d_RobotSpace("limelight").toPose2d();
+  }
+
+  public static Pose2d addDistanceAtAngle(Pose2d pose, double dist, double theta) {
+    Translation2d translate = new Translation2d(
+      Math.cos(Math.toRadians(theta)) * dist,
+      Math.sin(Math.toRadians(theta)) * dist
+    );
+
+    pose.getTranslation().plus(translate);
+    return pose;
+  }
+
+  // Assuming x means the distance out, and y is the distance left/right from the direction
+  public static Pose2d addPosesAtAngle(Pose2d pose1, Pose2d pose2, Rotation2d theta) {
+    pose1 = addDistanceAtAngle(pose2, pose2.getX(), theta.getDegrees());
+    pose1 = addDistanceAtAngle(pose2, pose2.getY(), theta.getDegrees() - 90); // Might be positive 90??
+
+    return pose1;
   }
 }

@@ -23,6 +23,8 @@ public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer;
 
   public Robot() {
+    System.out.println("Hello World!");
+
     // Setup AdvantageKit:
     /* Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 

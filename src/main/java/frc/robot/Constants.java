@@ -1,24 +1,19 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+
+import java.util.ArrayList;
+
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public final class Constants {
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-  }
-
-  public static final class AprilTags {
-    public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
-    public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
-
-    // TODO
-    public static final Pose2d coralPoseOffsetRightSide = new Pose2d();
-    public static final Pose2d coralPoseOffsetLeftSide = new Pose2d();
   }
 
   // EVERYTHING BELOW WAS COPIED FROM https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Constants.java
@@ -62,6 +57,11 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 23;
 
     public static final boolean kGyroReversed = false;
+
+    // Used for AprilTag positioning
+    // Full width/length including bumpers in meters
+    public static final double kFullWidth = 0.762;
+    public static final double kFullLength = 0.762;
   }
 
   public static final class ModuleConstants {
@@ -164,5 +164,19 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final class AprilTags {
+    public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
+    public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
+
+    public static final ArrayList<Translation2d> coralOffsets = new ArrayList<Translation2d>();
+
+    // in meters, adjust!
+    // Assuming x positive is towards the camera and y positive is to the right    
+    static {
+      coralOffsets.add(new Translation2d(DriveConstants.kFullWidth / 2, 0.5)); // left
+      coralOffsets.add(new Translation2d(DriveConstants.kFullWidth / 2, -0.5)); // right
+    }
   }
 }

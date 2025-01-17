@@ -13,6 +13,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,9 +24,12 @@ import frc.robot.subsystems.DriveSubsystem;
 // Put command on a "whileTrue" button, otherwise driver will have no way to cancel the command
 public class DriveToAprilTag extends Command {
   private final DriveSubsystem m_driveSubsystem;
+  private final int m_side;
 
-  public DriveToAprilTag(DriveSubsystem driveSubsystem) {
+  // 0 is left side, 1 is right side
+  public DriveToAprilTag(DriveSubsystem driveSubsystem, int side) {
     m_driveSubsystem = driveSubsystem;
+    m_side = side;
     addRequirements(driveSubsystem); // Prevents from driving while the path is active
   }
 
@@ -41,13 +45,21 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public void initialize() {
+    Pose2d currentRobotPose = m_driveSubsystem.getPose();
+    
     // Find the goal position, relative to the AprilTag's position (which is in relation to the bot, not the field)
     Pose2d aprilTagBotSpace = Utility.getTagPoseRelativeToBot();
-    // Add offset from AprilTag pose to the destination position
-    
-    // TODO
-    
 
+    // Find field-relative april tag rotation (bot rotation + apriltag rotation)
+    Rotation2d aprilTagAngle = Rotation2d.fromDegrees(currentRobotPose.getRotation().getDegrees() + aprilTagBotSpace.getRotation().getDegrees());
+
+    // Goal pose becomes coords on field where the AprilTag is
+    Pose2d goalPose = Utility.addPosesAtAngle(currentRobotPose, aprilTagBotSpace, currentRobotPose.getRotation());
+
+    // Add position goal offset to april tag location 
+    Pose2d offset = Constants.AprilTags.coralOffsets.get(m_side);
+    Pose2d finalGoal = Utility.addPosesAtAngle(currentRobotPose, offset, aprilTagAngle);
+    
     // Create path
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
       m_driveSubsystem.getPose()

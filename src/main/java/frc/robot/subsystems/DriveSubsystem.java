@@ -84,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
   // https://first.wpi.edu/wpilib/allwpilib/docs/beta/java/edu/wpi/first/math/estimator/SwerveDrivePoseEstimator.html
   SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics,
-    Rotation2d.fromDegrees(getRawAngle()),
+    Rotation2d.fromDegrees(getAngleBlueSide()),
     new SwerveModulePosition[] {
       m_frontLeft.getPosition(),
       m_frontRight.getPosition(),
