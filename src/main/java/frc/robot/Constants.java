@@ -1,7 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -154,6 +152,28 @@ public final class Constants {
         // longer route.
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(ModuleConstants.kTurningEncoderPositionPIDMinInput, ModuleConstants.kTurningEncoderPositionPIDMaxInput);
+    }
+  }
+
+  public static final class MotorConfig {
+    public static final SparkMaxConfig elevator = new SparkMaxConfig();
+
+    static {
+      elevator
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(20); // CHANGE THIS IN THE FUTURE PLAZ
+      elevator.absoluteEncoder
+        .positionConversionFactor(1)
+        .velocityConversionFactor(1);
+      elevator.closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .pid(0.00001, 0, 1)
+        .outputRange(-1, 1)
+        .positionWrappingEnabled(false);
+      // elevator.closedLoop.maxMotion
+      //   .maxVelocity(0)
+      //   .maxAcceleration(0)
+      //   .allowedClosedLoopError(0);
     }
   }
 
