@@ -15,6 +15,7 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -48,7 +49,9 @@ public class DriveToAprilTag extends Command {
     Pose2d currentRobotPose = m_driveSubsystem.getPose();
     
     // Find the goal position, relative to the AprilTag's position (which is in relation to the bot, not the field)
-    Pose2d aprilTagBotSpace = Utility.getTagPoseRelativeToBot();
+    Pose3d aprilTagBotSpace = Utility.getTagPoseRelativeToBot();
+    double rotation = aprilTagBotSpace.getRotation().getY(); // Degrees, where positive means tag is rotating clockwise
+    // Robot field rotation is positive = counterclockwise...
 
     // Find field-relative april tag rotation (bot rotation + apriltag rotation)
     Rotation2d aprilTagAngle = Rotation2d.fromDegrees(currentRobotPose.getRotation().getDegrees() + aprilTagBotSpace.getRotation().getDegrees());
@@ -57,8 +60,8 @@ public class DriveToAprilTag extends Command {
     Pose2d goalPose = Utility.addPosesAtAngle(currentRobotPose, aprilTagBotSpace, currentRobotPose.getRotation());
 
     // Add position goal offset to april tag location 
-    Pose2d offset = Constants.AprilTags.coralOffsets.get(m_side);
-    Pose2d finalGoal = Utility.addPosesAtAngle(currentRobotPose, offset, aprilTagAngle);
+    // Pose2d offset = Constants.AprilTags.coralOffsets.get(m_side);
+    // Pose2d finalGoal = Utility.addPosesAtAngle(currentRobotPose, offset, aprilTagAngle);
     
     // Create path
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
@@ -66,17 +69,19 @@ public class DriveToAprilTag extends Command {
 
     );
 
-    PathPlannerPath path = new PathPlannerPath(
-      waypoints,
-      new PathConstraints(0.2,  0.2, 0.2, 0.2), // really slow for testing purposes
-      null,
-      new GoalEndState(
-        0,
-        Rotation2d.fromDegrees(m_driveSubsystem.getAngleBlueSide()).plus(aprilTagBotSpace.getRotation()) // no idea if this will work :O
-      )
-    );
+    // PathPlannerPath path = new PathPlannerPath(
+    //   waypoints,
+    //   new PathConstraints(0.2,  0.2, 0.2, 0.2), // really slow for testing purposes
+    //   null,
+    //   new GoalEndState(
+    //     0,
+    //     Rotation2d.fromDegrees(m_driveSubsystem.getAngleBlueSide()).plus(aprilTagBotSpace.getRotation()) // no idea if this will work :O
+    //   )
+    // );
 
-    path.preventFlipping = true;
+    // path.preventFlipping = true;
+
+    // Display trajectory via SmartDashboard?
   }
 
   @Override
