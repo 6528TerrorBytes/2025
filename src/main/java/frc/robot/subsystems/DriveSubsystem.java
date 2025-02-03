@@ -26,7 +26,6 @@ import com.studica.frc.AHRS.NavXComType;
 import com.pathplanner.lib.auto.AutoBuilder; // Pathplanner: https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.config.PIDConstants;
 
 import frc.utils.SwerveUtils;
