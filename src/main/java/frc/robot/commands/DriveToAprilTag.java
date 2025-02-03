@@ -4,7 +4,13 @@
 
 package frc.robot.commands;
 
+import java.util.List;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -73,53 +79,60 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public void execute() {
-    if (!m_foundTag && coralTagInView()) {
-      m_foundTag = true;
-
-      Pose2d currentRobotPose = m_driveSubsystem.getPose();
-      Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot();
+    if (!m_foundTag) {
+      if (coralTagInView()) {
+        m_foundTag = true;
+  
+        Pose2d currentRobotPose = m_driveSubsystem.getPose();
+        Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot();
+        
+        // Convert AprilTag Pose3d to Pose2d
+        //                               TAG OUT DIST        TAG HORIZONTAL DIST
+        Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
       
-      // Convert AprilTag Pose3d to Pose2d
-      //                               TAG OUT DIST        TAG HORIZONTAL DIST
-      Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
+        // Calculate goal pose
+        Pose2d goalPos = findGoalPos(currentRobotPose, aprilTagPose, m_leftSide);
     
-      // Calculate goal pose
-      Pose2d goalPos = findGoalPos(currentRobotPose, aprilTagPose, m_leftSide);
+        // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
   
-      // Old based on https://pathplanner.dev/pplib-create-a-path-on-the-fly.html
-      {
         // Create path from current robot position to the new position
-        // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        //   m_driveSubsystem.getPose(),
-        //   goalPos
-        // );
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+          m_driveSubsystem.getPose(),
+          goalPos
+        );
   
-        // PathPlannerPath path = new PathPlannerPath(
-        //   waypoints,
-        //   Constants.AprilTags.constraints, // really slow for testing purposes
-        //   null,
-        //   new GoalEndState(0, goalPos.getRotation())
-        // );
+        PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          Constants.AprilTags.constraints, // really slow for testing purposes
+          null,
+          new GoalEndState(0, goalPos.getRotation())
+        );
   
-        // path.preventFlipping = true;
+        path.preventFlipping = true;
+        m_path = AutoBuilder.followPath(path);
+    
+        // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
+        // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
+        // m_path.initialize();
+
+      } else {
+        return; // Exit if no AprilTag in view
       }
-  
-      // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
-      m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
-      m_path.initialize();
     }
 
-    // Basically just wrap m_path in this external command now.
+    // Basically just wrapping m_path in this external command now.
     m_path.execute();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_path.end(interrupted);
+    if (m_foundTag) {
+      m_path.end(interrupted);
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return m_path.isFinished();
+    return m_foundTag && m_path.isFinished();
   }
 }

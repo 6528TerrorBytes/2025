@@ -8,6 +8,8 @@ package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -51,6 +53,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    PathfindingCommand.warmupCommand().schedule(); // load to be quicker on first run
   }
 
   /**
