@@ -5,16 +5,65 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
-import java.util.ArrayList;
-
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public final class Constants {
-  public static final class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+  public static final class SetPoints {
+    public static final double elevatorZero = 0;
+    public static final double elevatorLow = 0;
+    public static final double elevatorMedium = 0;
+    public static final double elevatorHigh = 0;
   }
 
-  // EVERYTHING BELOW WAS COPIED FROM https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Constants.java
+  public static final class AprilTags {
+    public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
+    public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
+
+    // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
+    public static final Translation2d coralOffset = new Translation2d(0.5, 1);
+    public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
+  }
+
+  public static final class MotorConfig {
+    public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+
+    static {
+      elevatorConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(20); // CHANGE THIS IN THE FUTURE PLAZ
+      elevatorConfig.absoluteEncoder
+        .positionConversionFactor(1)
+        .velocityConversionFactor(1);
+      elevatorConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .pid(0, 0, 0)
+        .outputRange(-1, 1)
+        .positionWrappingEnabled(false);
+      // elevatorConfig.closedLoop.maxMotion
+      //   .maxVelocity(0)
+      //   .maxAcceleration(0)
+      //   .allowedClosedLoopError(0);
+    }
+
+    public static final SparkMaxConfig rotationConfig = new SparkMaxConfig();
+
+    static {
+      rotationConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(20);
+      rotationConfig.absoluteEncoder
+        .positionConversionFactor(360)
+        .velocityConversionFactor(360 / 60);
+      rotationConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .pid(0, 0, 0)
+        .outputRange(-1, 1)
+        .positionWrappingEnabled(true);
+    }
+  }
+
+  // DRIVECONSTANTS & MODULECONSTANTS are copied from https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Constants.java
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -153,50 +202,13 @@ public final class Constants {
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(ModuleConstants.kTurningEncoderPositionPIDMinInput, ModuleConstants.kTurningEncoderPositionPIDMaxInput);
     }
-  }
-
-  public static final class MotorConfig {
-    public static final SparkMaxConfig elevator = new SparkMaxConfig();
-
-    static {
-      elevator
-        .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(20); // CHANGE THIS IN THE FUTURE PLAZ
-      elevator.absoluteEncoder
-        .positionConversionFactor(1)
-        .velocityConversionFactor(1);
-      elevator.closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(0.00001, 0, 1)
-        .outputRange(-1, 1)
-        .positionWrappingEnabled(false);
-      // elevator.closedLoop.maxMotion
-      //   .maxVelocity(0)
-      //   .maxAcceleration(0)
-      //   .allowedClosedLoopError(0);
-    }
-  }
-
+  }  
+  
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
   }
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-  }
-
-  public static final class AprilTags {
-    public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
-    public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
-
-    public static final ArrayList<Translation2d> coralOffsets = new ArrayList<Translation2d>();
-
-    // in meters, adjust!
-    // Assuming x positive is towards the camera and y positive is to the right    
-    static {
-      coralOffsets.add(new Translation2d(DriveConstants.kFullWidth / 2, 0.5)); // left
-      coralOffsets.add(new Translation2d(DriveConstants.kFullWidth / 2, -0.5)); // right
-    }
   }
 }

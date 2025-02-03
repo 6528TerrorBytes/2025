@@ -16,7 +16,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveSpeedChange;
+import frc.robot.commands.DriveToAprilTag;
+import frc.robot.commands.ElevatorMove;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Motors.Elevator;
 
 public class RobotContainer {
   // Joysticks
@@ -25,10 +28,11 @@ public class RobotContainer {
   public final Joystick otherJoystick = new Joystick(3);
 
   private SendableChooser<String> m_pathPlannerChooser = new SendableChooser<String>();
+
   // Subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Elevator m_elevator = new Elevator();
   
-
   public RobotContainer() {
     registerPathplannerCommands();
     setupPathplannerSelector();
@@ -52,6 +56,11 @@ public class RobotContainer {
   
   private void configureControllerBindings() {
     new JoystickButton(rightJoystick, 2).whileTrue(new DriveSpeedChange(0.5));
+
+    new JoystickButton(leftJoystick, 1).whileTrue(new ElevatorMove(m_elevator, 20));
+    new JoystickButton(leftJoystick, 2).whileTrue(new ElevatorMove(m_elevator, 0));
+
+    // new JoystickButton(leftJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, false));
     
     // Reset gyro
     new JoystickButton(leftJoystick, 11).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
@@ -79,7 +88,9 @@ public class RobotContainer {
       return null;
     }
 
-    return new PathPlannerAuto(selectedAuto);
+    PathPlannerAuto auto = new PathPlannerAuto(selectedAuto);
+    m_robotDrive.resetOdometry(auto.getStartingPose()); // Sets the odometry to the starting position of the robot in the autonomous
+    return auto;
   }
 
   public void updateSmartDashboard() {

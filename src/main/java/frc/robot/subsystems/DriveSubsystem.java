@@ -103,10 +103,10 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     // Displayed pathplanner path on the field perhaps
-    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-      // Do whatever you want with the pose here
-      m_field.getObject("target pose").setPose(pose);
-    });
+    // PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+    //   // Do whatever you want with the pose here
+    //   m_field.getObject("target pose").setPose(pose);
+    // });
     
     // Auton setup for PathPlanner, see https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 
@@ -181,13 +181,13 @@ public class DriveSubsystem extends SubsystemBase {
       // Making these too low will result in jittery pose estimation, too high results in not adjusting for vision data too quickly. Adjust as needed
       m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
       m_odometry.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+      
+      // Update SmartDashboard field position
+      m_field.setRobotPose(poseEstimate.pose);
     }
   }
 
   public void updateSmartDashboard() {
-    // Update SmartDashboard field position
-    m_field.setRobotPose(getPose());
-
     SmartDashboard.putData("Drive Subsystem Field", m_field);
   }
 

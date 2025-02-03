@@ -48,7 +48,7 @@ public final class Utility {
 
   // All of the different data you can get from the Limelight: https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
   
-  // Bottom left of field is (0, 0). X is long-side distance, Y is short-side distance
+  // Bottom left of field is (0, 0). X is long-side distance, Y is short-side distance: https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems
   public static PoseEstimate getRobotFieldPose() {
     return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight"); 
   }
@@ -57,23 +57,5 @@ public final class Utility {
   // Rotation Y is horizontal rotation. Positive Y means the right side of the tag is closest to the robot (tag rotating clockwise)
   public static Pose3d getTagPoseRelativeToBot() {
     return LimelightHelpers.getTargetPose3d_RobotSpace("limelight");
-  }
-
-  public static Pose2d addDistanceAtAngle(Pose2d pose, double dist, double theta) {
-    Translation2d translate = new Translation2d(
-      Math.cos(Math.toRadians(theta)) * dist,
-      Math.sin(Math.toRadians(theta)) * dist
-    );
-
-    pose.getTranslation().plus(translate);
-    return pose;
-  }
-
-  // Z means distance out, x positive is camera-out right, neg left 
-  public static Pose2d addPosesAtAngle(Pose2d pose1, Pose2d pose2, Rotation2d theta) {
-    pose1 = addDistanceAtAngle(pose2, pose2.getX(), theta.getDegrees());
-    pose1 = addDistanceAtAngle(pose2, pose2.getY(), theta.getDegrees() - 90); // Might be positive 90??
-
-    return pose1;
   }
 }
