@@ -83,7 +83,7 @@ public class DriveToAprilTag extends Command {
       if (coralTagInView()) {
         m_foundTag = true;
   
-        Pose2d currentRobotPose = m_driveSubsystem.getPose();
+        Pose2d robotPos = m_driveSubsystem.getPose();
         Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot();
         
         // Convert AprilTag Pose3d to Pose2d
@@ -91,15 +91,22 @@ public class DriveToAprilTag extends Command {
         Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
       
         // Calculate goal pose
-        Pose2d goalPos = findGoalPos(currentRobotPose, aprilTagPose, m_leftSide);
+        Pose2d goalPos = findGoalPos(robotPos, aprilTagPose, m_leftSide);
     
         // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
   
         // Create path from current robot position to the new position
+
+        // Angle pointing towards goal from the starting position:
+        double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+
+        // ROTATIONS ARE PATH OF TRAVEL
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-          m_driveSubsystem.getPose(),
+          new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
           goalPos
         );
+
+
   
         PathPlannerPath path = new PathPlannerPath(
           waypoints,
