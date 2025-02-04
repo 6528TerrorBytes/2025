@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
@@ -20,7 +21,6 @@ import frc.robot.Constants;
 import frc.robot.Utility;
 import frc.robot.subsystems.DriveSubsystem;
 
-// Put command on a "whileTrue" button, otherwise driver will have no way to cancel the command
 public class DriveToAprilTag extends Command {
   private final DriveSubsystem m_driveSubsystem;
   private final boolean m_leftSide; // Left or right side of the coral to go to
@@ -28,7 +28,6 @@ public class DriveToAprilTag extends Command {
   private boolean m_foundTag;
   private Command m_path;
 
-  // 0 is left side, 1 is right side
   public DriveToAprilTag(DriveSubsystem driveSubsystem, boolean leftSide) {
     m_driveSubsystem = driveSubsystem;
     m_leftSide = leftSide;
@@ -80,51 +79,46 @@ public class DriveToAprilTag extends Command {
   @Override
   public void execute() {
     if (!m_foundTag) {
-      if (coralTagInView()) {
-        m_foundTag = true;
-  
-        Pose2d robotPos = m_driveSubsystem.getPose();
-        Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot();
-        
-        // Convert AprilTag Pose3d to Pose2d
-        //                               TAG OUT DIST        TAG HORIZONTAL DIST
-        Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
+      if (!coralTagInView()) { return; } // Exit if no AprilTag in view
+
+      m_foundTag = true;
+
+      Pose2d robotPos = m_driveSubsystem.getPose();
+      Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot();
       
-        // Calculate goal pose
-        Pose2d goalPos = findGoalPos(robotPos, aprilTagPose, m_leftSide);
+      // Convert AprilTag Pose3d to Pose2d
+      //                               TAG OUT DIST        TAG HORIZONTAL DIST
+      Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
     
-        // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
+      // Calculate goal pose
+      Pose2d goalPos = findGoalPos(robotPos, aprilTagPose, m_leftSide);
   
-        // Create path from current robot position to the new position
+      // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
 
-        // Angle pointing towards goal from the starting position:
-        double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      // Create path from current robot position to the new position
 
-        // ROTATIONS ARE PATH OF TRAVEL
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-          new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
-          goalPos
-        );
+      // Angle pointing towards goal from the starting position:
+      double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
 
+      // ROTATIONS ARE PATH OF TRAVEL
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
+        goalPos
+      );
 
+      PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        Constants.AprilTags.constraints, // really slow for testing purposes
+        null, // May need to add a starting state for velocity & angle of the bot at the start of the pose
+        new GoalEndState(0, goalPos.getRotation())
+      );
+
+      path.preventFlipping = true;
+      m_path = AutoBuilder.followPath(path);
   
-        PathPlannerPath path = new PathPlannerPath(
-          waypoints,
-          Constants.AprilTags.constraints, // really slow for testing purposes
-          null,
-          new GoalEndState(0, goalPos.getRotation())
-        );
-  
-        path.preventFlipping = true;
-        m_path = AutoBuilder.followPath(path);
-    
-        // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
-        // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
-        // m_path.initialize();
-
-      } else {
-        return; // Exit if no AprilTag in view
-      }
+      // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
+      // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
+      // m_path.initialize();
     }
 
     // Basically just wrapping m_path in this external command now.

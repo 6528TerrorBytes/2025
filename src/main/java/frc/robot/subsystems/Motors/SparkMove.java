@@ -32,6 +32,14 @@ public class SparkMove extends SubsystemBase {
     m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
+  @Override
+  public void periodic() {
+    // Sets reference of motor higher/lower based on the constant offset (gravity)
+    // Example: https://github.com/STMARobotics/frc-7028-2023/blob/5578980e795de4744cb163f76aa883e8ba2c35d5/src/main/java/frc/robot/subsystems/WristSubsystem.java
+    // May not be necessary because the new position control is now based on position rather rather than velocity.
+    // if (m_motor.get() != 0) { }
+  }
+
   public void setGoal(double position) {
     m_goal = position;
     m_controller.setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
