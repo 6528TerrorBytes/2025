@@ -45,6 +45,7 @@ public class SparkMove extends SubsystemBase {
     m_controller.setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
   }
 
+
   public void setTolerance(double tolerance) {
     m_tolerance = tolerance;
   }
