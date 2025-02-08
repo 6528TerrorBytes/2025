@@ -4,31 +4,34 @@
 
 package frc.robot.commands;
 
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Motors.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ElevatorMove extends Command {
-  private final Elevator m_elevator;
-  private final double m_setPoint;
-
-  /** Creates a new ElevatorMove. */
-  public ElevatorMove(Elevator elevator, double setPoint) {
-    m_elevator = elevator;
-    m_setPoint = setPoint;
-
-    addRequirements(elevator);
+public class MotorMoveTesting extends Command {
+  private final SparkMax m_motor;
+  private final double m_speed;
+  /** Creates a new MotorMoveTesting. */
+  public MotorMoveTesting(SparkMax motor, double speed) {
+    m_motor = motor;
+    m_speed = speed;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_elevator.setGoal(m_setPoint);
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    m_motor.set(m_speed);
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.disable();
+    m_motor.set(0);
   }
 
   // Returns true when the command should end.

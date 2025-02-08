@@ -31,35 +31,42 @@ public final class Constants {
     static {
       elevatorConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(20); // CHANGE THIS IN THE FUTURE PLAZ
-      elevatorConfig.absoluteEncoder
+        .smartCurrentLimit(35)
+        .inverted(false);
+      elevatorConfig.alternateEncoder
         .positionConversionFactor(1)
         .velocityConversionFactor(1);
       elevatorConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(0, 0, 0)
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        .pid(0.025, 0, 0)
         .outputRange(-1, 1)
         .positionWrappingEnabled(false);
-      // elevatorConfig.closedLoop.maxMotion
-      //   .maxVelocity(0)
-      //   .maxAcceleration(0)
-      //   .allowedClosedLoopError(0);
+      elevatorConfig.closedLoop.maxMotion
+        .maxVelocity(200)
+        .maxAcceleration(200)
+        .allowedClosedLoopError(1); // IDK What this is
     }
 
-    public static final SparkMaxConfig rotationConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig climbConfig = new SparkMaxConfig();
 
     static {
-      rotationConfig
+      climbConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(20);
-      rotationConfig.absoluteEncoder
+        .smartCurrentLimit(35);
+      climbConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60);
-      rotationConfig.closedLoop
+      climbConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .pid(0, 0, 0)
+        .pid(0.025, 0, 0)
         .outputRange(-1, 1)
-        .positionWrappingEnabled(true);
+        .positionWrappingEnabled(true)
+        .positionWrappingMinInput(0)
+        .positionWrappingMaxInput(360);
+      climbConfig.closedLoop.maxMotion
+        .maxVelocity(360 * 300) // units per minute i think? of the actual motor, not the encoder?
+        .maxAcceleration(360 * 500)
+        .allowedClosedLoopError(10);
     }
   }
 

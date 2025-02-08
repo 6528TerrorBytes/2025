@@ -5,30 +5,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Motors.Elevator;
+import frc.robot.subsystems.Motors.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ElevatorMove extends Command {
-  private final Elevator m_elevator;
-  private final double m_setPoint;
+public class ClimbMove extends Command {
+  private final Climb m_climb;
+  private final double m_angle;
 
-  /** Creates a new ElevatorMove. */
-  public ElevatorMove(Elevator elevator, double setPoint) {
-    m_elevator = elevator;
-    m_setPoint = setPoint;
+  /** Creates a new ClimbMove. */
+  public ClimbMove(Climb climb, double angle) {
+    m_climb = climb;
+    m_angle = angle;
 
-    addRequirements(elevator);
+    addRequirements(climb);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevator.setGoal(m_setPoint);
+    m_climb.setGoal(m_angle);
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
+
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.disable();
+    m_climb.disable();
   }
 
   // Returns true when the command should end.

@@ -4,12 +4,18 @@
 
 package frc.robot.subsystems.Motors;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
-public class Elevator extends SparkMove {
+public class Elevator extends SparkMoveRelative {
   /** Creates a new Elevator. */
   public Elevator() {
-    super(9, Constants.MotorConfig.elevatorConfig);
+    super(4, Constants.MotorConfig.elevatorConfig);
     setTolerance(0.5); // test
+  }
+
+  @Override
+  public void periodic() {
+    
   }
 }

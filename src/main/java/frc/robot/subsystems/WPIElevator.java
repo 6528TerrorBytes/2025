@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,16 +21,22 @@ public class WPIElevator extends SubsystemBase {
   private final SparkMax m_motor; 
   private final AbsoluteEncoder m_encoder;
 
+  private final DutyCycleEncoder m_otherencoder;
+
   // Configuration
   private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(0, 0);
   private final ProfiledPIDController m_controller = new ProfiledPIDController(0, 0, 0, m_trapezoidConfig);
-  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0, 0, 0);
+  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0, 0, 0, 0);
+  // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-feedforward.html
+  // https://www.chiefdelphi.com/t/how-to-obtain-ks-for-feed-forward/446623
 
 
   /** Creates a new WPIElevator. */
   public WPIElevator(int id) {
     m_motor = new SparkMax(id, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
+
+    m_otherencoder = new DutyCycleEncoder(0);
 
     m_motor.configure(Constants.MotorConfig.elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }

@@ -16,18 +16,19 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class SparkMove extends SubsystemBase {
+// Uses relative encoder rather than absolute encoders
+public class SparkMoveRelative extends SubsystemBase {
   public final SparkMax m_motor;
-  private final AbsoluteEncoder m_encoder;
+  private final RelativeEncoder m_encoder;
   private final SparkClosedLoopController m_controller;
 
   private double m_goal;
   private double m_tolerance;
 
   /** Creates a new SparkMove. */
-  public SparkMove(int motorId, SparkMaxConfig config) {
+  public SparkMoveRelative(int motorId, SparkMaxConfig config) {
     m_motor = new SparkMax(motorId, MotorType.kBrushless);
-    m_encoder = m_motor.getAbsoluteEncoder();
+    m_encoder = m_motor.getAlternateEncoder();
     m_controller = m_motor.getClosedLoopController();
 
     m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
