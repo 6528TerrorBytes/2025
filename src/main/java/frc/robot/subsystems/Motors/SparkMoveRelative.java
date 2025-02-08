@@ -62,6 +62,10 @@ public class SparkMoveRelative extends SubsystemBase {
     return m_encoder.getPosition();
   }
 
+  public void zeroEncoder() {
+    m_encoder.setPosition(0);
+  }
+
   public void disable() {
     m_motor.set(0);
   }

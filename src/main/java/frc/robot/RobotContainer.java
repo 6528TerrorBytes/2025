@@ -24,6 +24,7 @@ import frc.robot.commands.MotorMoveTesting;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Motors.Climb;
 import frc.robot.subsystems.Motors.Elevator;
+import frc.utils.JoystickAnalogButton;
 
 public class RobotContainer {
   // Joysticks
@@ -77,11 +78,13 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 14).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-    new JoystickButton(leftJoystick, 7).whileTrue(new ElevatorMove(m_elevator, -0.5));
-    new JoystickButton(leftJoystick, 8).whileTrue(new ElevatorMove(m_elevator, -1.5));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ElevatorMove(m_elevator, 2.25));
+    new JoystickButton(leftJoystick, 8).whileTrue(new ElevatorMove(m_elevator, 1.25));
  
     new JoystickButton(leftJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
     new JoystickButton(leftJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
+
+    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
     
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
     // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(climbinner, -0.35));

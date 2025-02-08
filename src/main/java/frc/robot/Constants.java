@@ -31,19 +31,19 @@ public final class Constants {
     static {
       elevatorConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(35)
-        .inverted(false);
+        .smartCurrentLimit(35);
       elevatorConfig.alternateEncoder
         .positionConversionFactor(1)
-        .velocityConversionFactor(1);
+        .velocityConversionFactor(1)
+        .inverted(true);
       elevatorConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-        .pid(0.025, 0, 0)
+        .pid(2, 0, 1)
         .outputRange(-1, 1)
         .positionWrappingEnabled(false);
       elevatorConfig.closedLoop.maxMotion
-        .maxVelocity(200)
-        .maxAcceleration(200)
+        .maxVelocity(300)
+        .maxAcceleration(700)
         .allowedClosedLoopError(1); // IDK What this is
     }
 
