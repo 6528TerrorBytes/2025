@@ -28,7 +28,7 @@ public class SparkMoveRelative extends SubsystemBase {
   /** Creates a new SparkMove. */
   public SparkMoveRelative(int motorId, SparkMaxConfig config) {
     m_motor = new SparkMax(motorId, MotorType.kBrushless);
-    m_encoder = m_motor.getAlternateEncoder();
+    m_encoder = m_motor.getEncoder();
     m_controller = m_motor.getClosedLoopController();
 
     m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

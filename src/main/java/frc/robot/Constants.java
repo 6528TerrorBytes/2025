@@ -38,13 +38,13 @@ public final class Constants {
         .inverted(true);
       elevatorConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-        .pid(2, 0, 1)
+        .pid(5, 0, 0)
         .outputRange(-1, 1)
         .positionWrappingEnabled(false);
       elevatorConfig.closedLoop.maxMotion
         .maxVelocity(300)
-        .maxAcceleration(700)
-        .allowedClosedLoopError(1); // IDK What this is
+        .maxAcceleration(600)
+        .allowedClosedLoopError(0);
     }
 
     public static final SparkMaxConfig climbConfig = new SparkMaxConfig();
