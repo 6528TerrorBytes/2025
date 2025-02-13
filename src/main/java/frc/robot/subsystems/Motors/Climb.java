@@ -13,20 +13,20 @@ import frc.robot.Constants;
 
 public class Climb extends SubsystemBase {
   private final SparkMove m_outerMotor;
-  // private final SparkMove m_innerMotor; 
+  private final SparkMove m_innerMotor;
 
   /** Creates a new Climb. */
   public Climb() {
     Constants.MotorConfig.climbConfig.absoluteEncoder.inverted(true);
-    m_outerMotor = new SparkMove(1, Constants.MotorConfig.climbConfig);
+    m_outerMotor = new SparkMove(Constants.MotorIDs.climbOuterID, Constants.MotorConfig.climbConfig);
 
     // Inner is not inverted
     Constants.MotorConfig.climbConfig.absoluteEncoder.inverted(false);
-    // m_innerMotor = new SparkMove(2, Constants.MotorConfig.innerClimbConfig);
+    m_innerMotor = new SparkMove(Constants.MotorIDs.climbInnerID, Constants.MotorConfig.climbConfig);
 
     // Set tolerances
     m_outerMotor.setTolerance(10);
-    // m_innerMotor.setTolerance(10);
+    m_innerMotor.setTolerance(10);
   }
 
   @Override
@@ -36,11 +36,11 @@ public class Climb extends SubsystemBase {
 
   public void setGoal(double angle) {
     m_outerMotor.setGoal(angle); // test one at a time
-    // m_innerMotor.setGoal(angle);
+    m_innerMotor.setGoal(angle);
   }
 
   public boolean atGoal() {
-    return m_outerMotor.atGoal(); // && m_innerMotor.atGoal();
+    return m_outerMotor.atGoal() && m_innerMotor.atGoal();
   }
 
   public void disable() {
@@ -49,6 +49,6 @@ public class Climb extends SubsystemBase {
 
   public void updateSmartDashboard() {
     SmartDashboard.putNumber("OuterClimb", m_outerMotor.getPos());
-    // SmartDashboard.putNumber("InnerClimb", m_innerMotor.getPos());
+    SmartDashboard.putNumber("InnerClimb", m_innerMotor.getPos());
   }
 }

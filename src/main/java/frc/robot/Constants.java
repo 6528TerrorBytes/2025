@@ -25,8 +25,15 @@ public final class Constants {
     public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
   }
 
+  public static final class MotorIDs {
+    public static final int elevatorID = 4;
+    public static final int climbInnerID = 3;
+    public static final int climbOuterID = 1;
+  }
+
   public static final class MotorConfig {
     public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+    public static final double elevatorTolerance = 1;
 
     static {
       elevatorConfig
@@ -36,15 +43,6 @@ public final class Constants {
         .positionConversionFactor(1)
         .velocityConversionFactor(1)
         .inverted(true);
-      elevatorConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-        .pid(5, 0, 0)
-        .outputRange(-1, 1)
-        .positionWrappingEnabled(false);
-      elevatorConfig.closedLoop.maxMotion
-        .maxVelocity(300)
-        .maxAcceleration(600)
-        .allowedClosedLoopError(0);
     }
 
     public static final SparkMaxConfig climbConfig = new SparkMaxConfig();
@@ -67,6 +65,18 @@ public final class Constants {
         .maxVelocity(360 * 300) // units per minute i think? of the actual motor, not the encoder?
         .maxAcceleration(360 * 500)
         .allowedClosedLoopError(10);
+    }
+
+    public static final SparkMaxConfig armConfig = new SparkMaxConfig();
+    public static final double armTolerance = 5;
+
+    static {
+      armConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(35);
+      armConfig.absoluteEncoder
+        .positionConversionFactor(360)
+        .velocityConversionFactor(360 / 60);
     }
   }
 

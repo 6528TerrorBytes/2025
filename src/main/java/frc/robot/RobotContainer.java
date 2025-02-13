@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ClimbMove;
@@ -22,6 +23,7 @@ import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.ElevatorMove;
 import frc.robot.commands.MotorMoveTesting;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.WPIElevator;
 import frc.robot.subsystems.Motors.Climb;
 import frc.robot.subsystems.Motors.Elevator;
 import frc.utils.JoystickAnalogButton;
@@ -36,13 +38,9 @@ public class RobotContainer {
 
   // Subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  // private final Elevator m_elevator = new Elevator();
 
   private final Climb m_climb = new Climb();
-
-  private final Elevator m_elevator = new Elevator();
-  // private final SparkMax climbinner = new SparkMax(3, MotorType.kBrushless);
-  // private final SparkMax climbouter = new SparkMax(1, MotorType.kBrushless);
+  private final WPIElevator m_elevator = new WPIElevator();
   
   public RobotContainer() {
     registerPathplannerCommands();
@@ -95,8 +93,8 @@ public class RobotContainer {
 
 
     // testing climb
-    new JoystickButton(leftJoystick, 1).whileTrue(new ClimbMove(m_climb, 30));
-    new JoystickButton(leftJoystick, 2).whileTrue(new ClimbMove(m_climb, 160));
+    new JoystickButton(leftJoystick, 1).whileTrue(new ClimbMove(m_climb, 5));
+    new JoystickButton(leftJoystick, 2).whileTrue(new ClimbMove(m_climb, 100));
   }
 
   private void registerPathplannerCommands() {
@@ -128,6 +126,6 @@ public class RobotContainer {
   public void updateSmartDashboard() {
     m_robotDrive.updateSmartDashboard();
     SmartDashboard.putBoolean("April Tag In View", Utility.aprilTagInView());
-    SmartDashboard.putNumber("elevator", m_elevator.getPos());
+    SmartDashboard.putNumber("elevator", m_elevator.m_encoder.getPosition());
   }
 }
