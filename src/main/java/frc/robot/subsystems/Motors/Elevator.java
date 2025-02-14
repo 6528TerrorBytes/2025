@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.Motors;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class Elevator extends SparkMoveRelative {

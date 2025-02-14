@@ -26,9 +26,15 @@ public final class Constants {
   }
 
   public static final class MotorIDs {
-    public static final int elevatorID = 4;
-    public static final int climbInnerID = 3;
     public static final int climbOuterID = 1;
+    public static final int climbInnerID = 3;
+    public static final int elevatorID = 4;
+    public static final int armID = 5;
+    public static final int intakeMotorID = 6;
+  }
+
+  public static final class DigitalInputs {
+    public static final int coralDetector = 0;
   }
 
   public static final class MotorConfig {
@@ -38,45 +44,78 @@ public final class Constants {
     static {
       elevatorConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(35);
+        .smartCurrentLimit(35)
+        .inverted(false);
       elevatorConfig.alternateEncoder
         .positionConversionFactor(1)
         .velocityConversionFactor(1)
         .inverted(true);
     }
+    
+    public static final SparkMaxConfig armConfig = new SparkMaxConfig();
+    public static final double armTolerance = 5;
 
-    public static final SparkMaxConfig climbConfig = new SparkMaxConfig();
+    public static final double armAngleAtRest = 42; // angle it sits at with no power
+    public static final double armAngleHorizontal = 112; // angle when it's perfectly horizontal
+    public static final double armAngleVerticalDown = armAngleHorizontal - 90;
 
     static {
-      climbConfig
+      armConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(35);
-      climbConfig.absoluteEncoder
+        .smartCurrentLimit(35)
+        .inverted(false);
+      armConfig.absoluteEncoder
         .positionConversionFactor(360)
-        .velocityConversionFactor(360 / 60);
-      climbConfig.closedLoop
+        .velocityConversionFactor(360 / 60)
+        .inverted(false);
+    }
+
+    public static final SparkMaxConfig outerClimbConfig = new SparkMaxConfig();
+
+    static {
+      outerClimbConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(35)
+        .inverted(false);
+      outerClimbConfig.absoluteEncoder
+        .positionConversionFactor(360)
+        .velocityConversionFactor(360 / 60)
+        .inverted(true);
+      outerClimbConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .pid(0.025, 0, 0)
         .outputRange(-1, 1)
-        .positionWrappingEnabled(true)
-        .positionWrappingMinInput(0)
-        .positionWrappingMaxInput(360);
-      climbConfig.closedLoop.maxMotion
+        .positionWrappingEnabled(false);
+        // .positionWrappingMinInput(0)
+        // .positionWrappingMaxInput(360);
+      outerClimbConfig.closedLoop.maxMotion
         .maxVelocity(360 * 300) // units per minute i think? of the actual motor, not the encoder?
         .maxAcceleration(360 * 500)
         .allowedClosedLoopError(10);
     }
 
-    public static final SparkMaxConfig armConfig = new SparkMaxConfig();
-    public static final double armTolerance = 5;
+    public static final SparkMaxConfig innerClimbConfig = new SparkMaxConfig();
 
     static {
-      armConfig
+      innerClimbConfig
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(35);
-      armConfig.absoluteEncoder
+        .smartCurrentLimit(35)
+        .inverted(true); // this is important or else it'll go the wrong direction away from any setpoints
+      innerClimbConfig.absoluteEncoder
         .positionConversionFactor(360)
-        .velocityConversionFactor(360 / 60);
+        .velocityConversionFactor(360 / 60)
+        .inverted(false);
+      innerClimbConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .pid(0.025, 0, 0)
+        .outputRange(-1, 1)
+        .positionWrappingEnabled(false);
+        // .positionWrappingMinInput(0)
+        // .positionWrappingMaxInput(360);
+      innerClimbConfig.closedLoop.maxMotion
+        .maxVelocity(360 * 300) // units per minute i think? of the actual motor, not the encoder?
+        .maxAcceleration(360 * 500)
+        .allowedClosedLoopError(10);
     }
   }
 

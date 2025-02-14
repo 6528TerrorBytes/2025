@@ -18,11 +18,16 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.ArmMove;
 import frc.robot.commands.ClimbMove;
 import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.ElevatorMove;
+import frc.robot.commands.IntakeDrive;
 import frc.robot.commands.MotorMoveTesting;
+import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeMotor;
+import frc.robot.subsystems.WPIArm;
 import frc.robot.subsystems.WPIElevator;
 import frc.robot.subsystems.Motors.Climb;
 import frc.robot.subsystems.Motors.Elevator;
@@ -41,6 +46,10 @@ public class RobotContainer {
 
   private final Climb m_climb = new Climb();
   private final WPIElevator m_elevator = new WPIElevator();
+  private final WPIArm m_arm = new WPIArm();
+  private final IntakeMotor m_intakeMotor = new IntakeMotor();
+
+  private final CoralDetector m_coralDetector = new CoralDetector();
   
   public RobotContainer() {
     registerPathplannerCommands();
@@ -76,13 +85,18 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 14).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-    new JoystickButton(leftJoystick, 7).whileTrue(new ElevatorMove(m_elevator, 2.25));
-    new JoystickButton(leftJoystick, 8).whileTrue(new ElevatorMove(m_elevator, 1.25));
+    new JoystickButton(leftJoystick, 8).whileTrue(new ElevatorMove(m_elevator, 2));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ElevatorMove(m_elevator, 0.25));
+
+    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, 100));
+    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, 150));
  
     new JoystickButton(leftJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
     new JoystickButton(leftJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
 
-    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
+    // Triggers
+    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new IntakeDrive(m_intakeMotor, m_coralDetector));
+    new JoystickAnalogButton(leftJoystick, 2, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
     
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
     // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(climbinner, -0.35));
@@ -92,9 +106,9 @@ public class RobotContainer {
 
 
 
-    // testing climb
-    new JoystickButton(leftJoystick, 1).whileTrue(new ClimbMove(m_climb, 5));
-    new JoystickButton(leftJoystick, 2).whileTrue(new ClimbMove(m_climb, 100));
+    // Climb
+    new JoystickButton(leftJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
+    new JoystickButton(leftJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
   }
 
   private void registerPathplannerCommands() {
@@ -127,5 +141,8 @@ public class RobotContainer {
     m_robotDrive.updateSmartDashboard();
     SmartDashboard.putBoolean("April Tag In View", Utility.aprilTagInView());
     SmartDashboard.putNumber("elevator", m_elevator.m_encoder.getPosition());
+    SmartDashboard.putBoolean("Coral Detected", m_coralDetector.detected());
+    SmartDashboard.putNumber("Arm Encoder", m_arm.m_encoder.getPosition());
+    m_climb.updateSmartDashboard();
   }
 }

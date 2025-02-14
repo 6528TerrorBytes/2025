@@ -17,21 +17,12 @@ public class Climb extends SubsystemBase {
 
   /** Creates a new Climb. */
   public Climb() {
-    Constants.MotorConfig.climbConfig.absoluteEncoder.inverted(true);
-    m_outerMotor = new SparkMove(Constants.MotorIDs.climbOuterID, Constants.MotorConfig.climbConfig);
-
-    // Inner is not inverted
-    Constants.MotorConfig.climbConfig.absoluteEncoder.inverted(false);
-    m_innerMotor = new SparkMove(Constants.MotorIDs.climbInnerID, Constants.MotorConfig.climbConfig);
+    m_outerMotor = new SparkMove(Constants.MotorIDs.climbOuterID, Constants.MotorConfig.outerClimbConfig);
+    m_innerMotor = new SparkMove(Constants.MotorIDs.climbInnerID, Constants.MotorConfig.innerClimbConfig);
 
     // Set tolerances
     m_outerMotor.setTolerance(10);
     m_innerMotor.setTolerance(10);
-  }
-
-  @Override
-  public void periodic() {
-    updateSmartDashboard();
   }
 
   public void setGoal(double angle) {

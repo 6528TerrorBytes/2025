@@ -10,12 +10,12 @@ import frc.robot.subsystems.WPIArm;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ArmMove extends Command {
   private final WPIArm m_arm; 
-  private final double m_goal;
+  private final double m_setPoint;
 
   /** Creates a new ArmMove. */
-  public ArmMove(WPIArm arm, double goal) {
+  public ArmMove(WPIArm arm, double setPoint) {
     m_arm = arm;
-    m_goal = goal;
+    m_setPoint = setPoint;
 
     addRequirements(arm);
   }
@@ -23,7 +23,8 @@ public class ArmMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setGoal(m_goal);
+    m_arm.enable();
+    m_arm.setGoal(m_setPoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

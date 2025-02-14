@@ -23,22 +23,21 @@ public class ElevatorMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_elevator.enable();
     m_elevator.setGoal(m_setPoint);
   }
 
   @Override
-  public void execute() {
-
+  public void execute() {}
+  
+  @Override
+  public void end(boolean interrupted) {
+    m_elevator.disable();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
-  }
-  
-  @Override
-  public void end(boolean interrupted) {
-    m_elevator.disable();
   }
 }

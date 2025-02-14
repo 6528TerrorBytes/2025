@@ -21,11 +21,12 @@ public class WPIElevator extends SubsystemBase {
   public final RelativeEncoder m_encoder;
 
   private double m_goal;
+  private boolean m_disabled;
 
   // Configuration
-  private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(1, 1);
-  private final ProfiledPIDController m_controller = new ProfiledPIDController(1, 0, 0, m_trapezoidConfig);
-  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0, 0, 0);
+  private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(20, 16); // 0, 0
+  private final ProfiledPIDController m_controller = new ProfiledPIDController(16, 1.2, 0, m_trapezoidConfig); // p = 12
+  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0.1, 0.6, 0);
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-feedforward.html
   // https://www.chiefdelphi.com/t/how-to-obtain-ks-for-feed-forward/446623
 
@@ -34,31 +35,40 @@ public class WPIElevator extends SubsystemBase {
   public WPIElevator() {
     m_motor = new SparkMax(Constants.MotorIDs.elevatorID, MotorType.kBrushless);
     m_encoder = m_motor.getAlternateEncoder();
+    m_disabled = true;
 
+    m_controller.setTolerance(Constants.MotorConfig.elevatorTolerance);
     m_motor.configure(Constants.MotorConfig.elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
+    if (m_disabled) return;
+
     m_motor.setVoltage(
       m_controller.calculate(m_encoder.getPosition()) +
-      m_feedforward.calculate(m_encoder.getVelocity())
+      m_feedforward.calculate(m_controller.getSetpoint().velocity)
     );
   }
 
   public void setGoal(double goal) {
     m_goal = goal;
+    // Fixes desync between controller & position:
+    m_controller.reset(m_encoder.getPosition()); // Fixes an issue where after a period of being disabled and the elevator moving, the position goes backwards for a bit when setting new goal.
     m_controller.setGoal(goal);
   }
 
   public boolean atGoal() {
-    double pos = m_encoder.getPosition();
-    // Within plus/minus elevator tolerance of the goal position
-    return (pos >= m_goal - Constants.MotorConfig.elevatorTolerance) && (pos <= m_goal + Constants.MotorConfig.elevatorTolerance);
+    return m_controller.atSetpoint();
+  }
+  
+  public void enable() {
+    m_disabled = false;
   }
 
   public void disable() {
     m_motor.set(0);
+    m_disabled = true;
   }
 
   public void zeroEncoder() {
