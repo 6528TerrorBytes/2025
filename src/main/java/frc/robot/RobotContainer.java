@@ -29,15 +29,14 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
 import frc.robot.subsystems.WPIPID.Elevator;
-import frc.robot.subsystems.Motors.Climb;
-import frc.robot.subsystems.Motors.Elevator;
+import frc.robot.subsystems.SparkPID.Climb;
 import frc.utils.JoystickAnalogButton;
 
 public class RobotContainer {
   // Joysticks
   public final Joystick leftJoystick = new Joystick(0);
-  // public final Joystick rightJoystick = new Joystick(1);
-  // public final Joystick otherJoystick = new Joystick(2);
+  public final Joystick rightJoystick = new Joystick(1);
+  public final Joystick otherJoystick = new Joystick(2);
 
   private SendableChooser<String> m_pathPlannerChooser = new SendableChooser<String>();
 
@@ -60,16 +59,16 @@ public class RobotContainer {
   }
 
   public void setDriveCommand() {
-    // m_robotDrive.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> m_robotDrive.drive(
-    //       -MathUtil.applyDeadband(Math.pow(rightJoystick.getY(), 1) / 2, OIConstants.kDriveDeadband),
-    //       -MathUtil.applyDeadband(Math.pow(rightJoystick.getX(), 1) / 2, OIConstants.kDriveDeadband),
-    //       -MathUtil.applyDeadband(Math.pow(leftJoystick.getZ(),  1) / 2, OIConstants.kDriveDeadband),
-    //       true, true, true),
-    //     m_robotDrive 
-    //   )
-    // );
+    m_robotDrive.setDefaultCommand(
+      new RunCommand(
+        () -> m_robotDrive.drive(
+          -MathUtil.applyDeadband(Math.pow(rightJoystick.getY(), 1) / 2, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(Math.pow(rightJoystick.getX(), 1) / 2, OIConstants.kDriveDeadband),
+          -MathUtil.applyDeadband(Math.pow(leftJoystick.getZ(),  1) / 2, OIConstants.kDriveDeadband),
+          true, true, true),
+        m_robotDrive 
+      )
+    );
     // ); // Call of duty (:<
   }
   
@@ -82,21 +81,23 @@ public class RobotContainer {
     // new JoystickButton(leftJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, false));
     
     // Reset gyro
-    // new JoystickButton(rightJoystick, 14).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
+    new JoystickButton(rightJoystick, 14).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-    new JoystickButton(leftJoystick, 8).whileTrue(new ElevatorMove(m_elevator, 2));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ElevatorMove(m_elevator, 0.25));
+    new JoystickButton(otherJoystick, 3).whileTrue(new ElevatorMove(m_elevator, 5.3));
+    new JoystickButton(otherJoystick, 2).whileTrue(new ElevatorMove(m_elevator, 2.15));
+    new JoystickButton(otherJoystick, 1).whileTrue(new ElevatorMove(m_elevator, 2));
 
-    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, 100));
-    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, 150));
+    new JoystickButton(otherJoystick, 4).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
+    new JoystickButton(otherJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
+    new JoystickButton(otherJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 60));
  
-    new JoystickButton(leftJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
-    new JoystickButton(leftJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
+    // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
+    // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
 
     // Triggers
-    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
-    new JoystickAnalogButton(leftJoystick, 2, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
+    new JoystickAnalogButton(otherJoystick, 3, 0.5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
+    new JoystickAnalogButton(otherJoystick, 2, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
     
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
     // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(climbinner, -0.35));
@@ -107,8 +108,8 @@ public class RobotContainer {
 
 
     // Climb
-    new JoystickButton(leftJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
-    new JoystickButton(leftJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
+    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
+    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
   }
 
   private void registerPathplannerCommands() {

@@ -136,9 +136,9 @@ public class DriveSubsystem extends SubsystemBase {
     );
   }
 
-  // Get total accumulated NavX Yaw in degrees
+  // Get rotation in degrees
   public double getRawAngle() {
-    return -m_navX.getAngle();
+    return Math.toDegrees(m_navX.getRotation3d().getZ());
   }
 
   // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)
@@ -148,6 +148,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    System.out.println(Math.toDegrees(m_navX.getRotation3d().getZ())); // ??
+
     // System.out.println("Drive train periodic is running (this println is for Pathplanner Apriltag pose estimation testing)");
 
     // Update the odometry in the periodic block
