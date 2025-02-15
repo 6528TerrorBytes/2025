@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.WPIPID;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
@@ -16,7 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class WPIElevator extends SubsystemBase {
+public class Elevator extends SubsystemBase {
   public final SparkMax m_motor; 
   public final RelativeEncoder m_encoder;
 
@@ -30,9 +30,7 @@ public class WPIElevator extends SubsystemBase {
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-feedforward.html
   // https://www.chiefdelphi.com/t/how-to-obtain-ks-for-feed-forward/446623
 
-
-  /** Creates a new WPIElevator. */
-  public WPIElevator() {
+  public Elevator() {
     m_motor = new SparkMax(Constants.MotorIDs.elevatorID, MotorType.kBrushless);
     m_encoder = m_motor.getAlternateEncoder();
     m_disabled = true;

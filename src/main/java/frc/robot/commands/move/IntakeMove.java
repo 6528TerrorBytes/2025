@@ -2,21 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.move;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.IntakeMotor;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IntakeDrive extends Command {
+public class IntakeMove extends Command {
   private final IntakeMotor m_intakeMotor;
   private final CoralDetector m_coralDetector;
 
   private boolean m_startDetected;
 
-  /** Creates a new IntakeDrive. */
-  public IntakeDrive(IntakeMotor intakeMotor, CoralDetector coralDetector) {
+  public IntakeMove(IntakeMotor intakeMotor, CoralDetector coralDetector) {
     m_intakeMotor = intakeMotor;
     m_coralDetector = coralDetector;
 

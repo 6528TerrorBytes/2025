@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.WPIPID;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class WPIArm extends SubsystemBase {
+public class IntakeArm extends SubsystemBase {
   private final SparkMax m_motor;
   public final AbsoluteEncoder m_encoder;
 
@@ -29,14 +29,12 @@ public class WPIArm extends SubsystemBase {
   private final ProfiledPIDController m_controller = new ProfiledPIDController(0.05, 0.01, 0, m_trapezoidConfig);
   private final ArmFeedforward m_feedforward = new ArmFeedforward(0, 0.95, 0);
 
-  /** Creates a new WPIArm. */
-  public WPIArm() {
+  public IntakeArm() {
     m_motor = new SparkMax(Constants.MotorIDs.armID, MotorType.kBrushless);
     m_encoder = m_motor.getAbsoluteEncoder();
     m_disabled = true;
 
     m_controller.setTolerance(Constants.MotorConfig.armTolerance);
-
     m_motor.configure(Constants.MotorConfig.armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 

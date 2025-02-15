@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Motors;
+package frc.robot.subsystems.SparkPID;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Uses relative encoder rather than absolute encoders
+// Not used right now. The elevator uses WPILib's PID controllers.
 public class SparkMoveRelative extends SubsystemBase {
   public final SparkMax m_motor;
   private final RelativeEncoder m_encoder;
