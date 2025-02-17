@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -21,10 +20,8 @@ public class IntakeArm extends SubsystemBase {
   private final SparkMax m_motor;
   public final AbsoluteEncoder m_encoder;
 
-  private double m_goal;
   private boolean m_disabled;
 
-  // This doesn't work when maxAcceleration is greater than zero for some reason
   private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(1000, 1000);
   private final ProfiledPIDController m_controller = new ProfiledPIDController(0.05, 0.01, 0, m_trapezoidConfig);
   private final ArmFeedforward m_feedforward = new ArmFeedforward(0, 0.95, 0);
@@ -50,7 +47,6 @@ public class IntakeArm extends SubsystemBase {
   }
 
   public void setGoal(double goal) {
-    m_goal = goal;
     m_controller.reset(m_encoder.getPosition()); // Fixes desync, very important
     m_controller.setGoal(goal);
   }

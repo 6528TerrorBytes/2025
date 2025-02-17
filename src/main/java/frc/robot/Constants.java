@@ -39,7 +39,7 @@ public final class Constants {
 
   public static final class MotorConfig {
     public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-    public static final double elevatorTolerance = 1;
+    public static final double elevatorTolerance = 8;
 
     static {
       elevatorConfig
@@ -53,7 +53,7 @@ public final class Constants {
     }
     
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
-    public static final double armTolerance = 5;
+    public static final double armTolerance = 8;
 
     public static final double armAngleAtRest = 42; // angle it sits at with no power
     public static final double armAngleHorizontal = 112; // angle when it's perfectly horizontal

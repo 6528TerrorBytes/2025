@@ -20,13 +20,12 @@ public class Elevator extends SubsystemBase {
   public final SparkMax m_motor; 
   public final RelativeEncoder m_encoder;
 
-  private double m_goal;
   private boolean m_disabled;
 
   // Configuration
-  private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(20, 16); // 0, 0
-  private final ProfiledPIDController m_controller = new ProfiledPIDController(16, 1.2, 0, m_trapezoidConfig); // p = 12
-  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0.1, 0.6, 0);
+  private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(20, 16);
+  private final ProfiledPIDController m_controller = new ProfiledPIDController(16, 1.2, 0, m_trapezoidConfig);
+  private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(0.1, 0.6, 0); // make it so that when not moving, it holds its position
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-feedforward.html
   // https://www.chiefdelphi.com/t/how-to-obtain-ks-for-feed-forward/446623
 
@@ -50,7 +49,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setGoal(double goal) {
-    m_goal = goal;
     // Fixes desync between controller & position:
     m_controller.reset(m_encoder.getPosition()); // Fixes an issue where after a period of being disabled and the elevator moving, the position goes backwards for a bit when setting new goal.
     m_controller.setGoal(goal);

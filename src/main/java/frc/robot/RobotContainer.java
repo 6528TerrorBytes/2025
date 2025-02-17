@@ -5,8 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,15 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.move.ArmMove;
-import frc.robot.commands.move.ClimbMove;
 import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
-import frc.robot.commands.move.MotorMoveTesting;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeMotor;
