@@ -148,8 +148,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(getRawAngle());
-
     // System.out.println("Drive train periodic is running (this println is for Pathplanner Apriltag pose estimation testing)");
 
     // Update the odometry in the periodic block

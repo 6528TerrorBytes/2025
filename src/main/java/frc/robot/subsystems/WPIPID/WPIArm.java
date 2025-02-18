@@ -69,6 +69,10 @@ public class WPIArm extends SubsystemBase {
     return m_controller.atSetpoint();
   }
 
+  public double getPos() {
+    return m_encoder.getPosition();
+  }
+
   public void enable() {
     m_disabled = false;
   }

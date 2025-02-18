@@ -24,7 +24,6 @@ import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
 import frc.robot.subsystems.WPIPID.Elevator;
 import frc.robot.subsystems.SparkPID.Climb;
-import frc.utils.JoystickAnalogButton;
 
 public class RobotContainer {
   // Joysticks
@@ -75,35 +74,39 @@ public class RobotContainer {
     // new JoystickButton(leftJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, false));
     
     // Reset gyro
-    new JoystickButton(rightJoystick, 14).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
+    new JoystickButton(rightJoystick, 16).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-    new JoystickButton(otherJoystick, 3).whileTrue(new ElevatorMove(m_elevator, 5.3));
-    new JoystickButton(otherJoystick, 2).whileTrue(new ElevatorMove(m_elevator, 2.15));
-    new JoystickButton(otherJoystick, 1).whileTrue(new ElevatorMove(m_elevator, 2));
+    // ELEVATOR
+    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 5.5));
+    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, 2.15));
+    new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, 0.1));
+    
+    // Zero elevator
+    new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
 
-    new JoystickButton(otherJoystick, 4).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
-    new JoystickButton(otherJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
-    new JoystickButton(otherJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 60));
+    // ARM
+    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
+    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 70));
+
+    // CLIMB
+    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
+    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
+
+    // INTAKE
+    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
  
+    // MANUAL ELEVATOR
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
     // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
-
-    // Triggers
-    new JoystickAnalogButton(otherJoystick, 3, 0.5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
-    new JoystickAnalogButton(otherJoystick, 2, 0.5).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
     
+    // MANUAL CLIMB
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
     // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(climbinner, -0.35));
 
     // new JoystickButton(otherJoystick, 7).whileTrue(new MotorMoveTesting(climbouter, 0.35));
     // new JoystickButton(otherJoystick, 8).whileTrue(new MotorMoveTesting(climbouter, -0.35));
-
-
-
-    // Climb
-    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
-    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
   }
 
   private void registerPathplannerCommands() {
@@ -138,6 +141,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("elevator", m_elevator.m_encoder.getPosition());
     SmartDashboard.putBoolean("Coral Detected", m_coralDetector.detected());
     SmartDashboard.putNumber("Arm Encoder", m_arm.m_encoder.getPosition());
+    SmartDashboard.putNumber("Gyro", m_robotDrive.getRawAngle());
     m_climb.updateSmartDashboard();
   }
 }

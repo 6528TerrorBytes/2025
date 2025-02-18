@@ -11,7 +11,7 @@ public class IntakeArm extends WPIArm {
     super(
       Constants.MotorIDs.armID, Constants.MotorConfig.armConfig, Constants.MotorConfig.armTolerance,
       1000, 1000, // Max velocity, Max acceleration
-      0.05, 0.01, 0, // PID
+      0.035, 0, 0, // PID
       0, 0.95, 0 // S, G, V (Arm Feedforward)
     );
   }
