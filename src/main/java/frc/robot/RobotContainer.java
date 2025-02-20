@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.move.ArmMove;
+import frc.robot.commands.move.ClimbManualMove;
+import frc.robot.commands.move.ClimbMove;
 import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
 import frc.robot.subsystems.CoralDetector;
@@ -88,11 +90,13 @@ public class RobotContainer {
     // ARM
     new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
     new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 70));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 80)); // 18.5 inches
 
-    // CLIMB
-    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 20));
-    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 140));
+    // CLIMB SETPOINT
+    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));
+    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 145));
+
+    new JoystickButton(otherJoystick, 1).whileFalse(new ClimbManualMove(m_climb, 140));
 
     // INTAKE
     new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));

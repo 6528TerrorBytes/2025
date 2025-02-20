@@ -74,7 +74,7 @@ public final class Constants {
 
     static {
       outerClimbConfig
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(35)
         .inverted(false);
       outerClimbConfig.absoluteEncoder
@@ -98,7 +98,7 @@ public final class Constants {
 
     static {
       innerClimbConfig
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(35)
         .inverted(true); // this is important or else it'll go the wrong direction away from any setpoints
       innerClimbConfig.absoluteEncoder

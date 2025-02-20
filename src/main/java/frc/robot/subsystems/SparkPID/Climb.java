@@ -36,6 +36,15 @@ public class Climb extends SubsystemBase {
     m_innerMotor.disable();
   }
 
+  public void setPower(double power) {
+    m_outerMotor.setPower(power);
+    m_innerMotor.setPower(power);
+  }
+
+  public double getPos() {
+    return m_outerMotor.getPos();
+  }
+
   public void updateSmartDashboard() {
     SmartDashboard.putNumber("OuterClimb", m_outerMotor.getPos());
     SmartDashboard.putNumber("InnerClimb", m_innerMotor.getPos());

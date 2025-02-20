@@ -63,4 +63,8 @@ public class SparkMove extends SubsystemBase {
   public void disable() {
     m_motor.set(0);
   }
+
+  public void setPower(double power) {
+    m_motor.set(power);
+  }
 }
