@@ -41,7 +41,7 @@ public class ArmMove extends Command {
   @Override
   public boolean isFinished() {
     if (m_arm.atGoal()) {
-      System.out.println("Arm angle reached");
+      System.out.println("Arm position reached");
     }
 
     return false;

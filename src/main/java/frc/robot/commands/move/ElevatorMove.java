@@ -26,10 +26,8 @@ public class ElevatorMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_arm.getPos() > 50) { // temporary
-      m_elevator.enable();
-      m_elevator.setGoal(m_setPoint);
-    }
+    m_elevator.enable();
+    m_elevator.setGoal(m_setPoint);
   }
 
   @Override
@@ -43,6 +41,10 @@ public class ElevatorMove extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (m_elevator.atGoal()) {
+      System.out.println("Elevator position reached");
+    }
+
     return false;
   }
 }

@@ -9,11 +9,20 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public final class Constants {
-  public static final class SetPoints {
-    public static final double elevatorZero = 0;
-    public static final double elevatorLow = 0;
-    public static final double elevatorMedium = 0;
-    public static final double elevatorHigh = 0;
+  public static final class Setpoints {
+    // Elevator setpoints
+    public static final double elevatorZero = 0.1;
+    public static final double elevatorMedium = 2.15;
+    public static final double elevatorHigh = 6.2;
+
+    // Arm config angles    
+    public static final double armAngleAtRest = 42; // angle it sits at with no power
+    public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
+    
+    // Arm setpoint angles
+    public static final double armAngleVerticalDown = armAngleHorizontal - 90;
+    public static final double armAngleMedium = armAngleVerticalDown + 37;
+    public static final double armAngleHigh = armAngleVerticalDown + 80;
   }
 
   public static final class AprilTags {
@@ -54,10 +63,6 @@ public final class Constants {
     
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
     public static final double armTolerance = 8;
-
-    public static final double armAngleAtRest = 42; // angle it sits at with no power
-    public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
-    public static final double armAngleVerticalDown = armAngleHorizontal - 90;
 
     static {
       armConfig

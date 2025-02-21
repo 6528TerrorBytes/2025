@@ -12,7 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.move.ArmMove;
@@ -81,9 +84,9 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
     // ELEVATOR
-    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 6.2)); // old 18.5 inches out was 5.5 setpoint
-    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, 2.15));
-    new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, 0.1));
+    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh));
+    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium));
+    new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
     
     // Zero elevator
     new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
@@ -93,11 +96,26 @@ public class RobotContainer {
     new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.15));
     new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new ElevatorMove(m_elevator, m_arm, m_elevator.getPos()));
 
+    // High shooting mockup automation
+    // new SequentialCommandGroup(
+    //   new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+    //   new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
+
+    //   // here: position the robot next to the reef properly
+    
+    //   new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal),
+      
+    //   new ParallelDeadlineGroup( // Shoot then pull arm back
+    //     new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+    //     new IntakeMove(m_intakeMotor, m_coralDetector)
+    //   )
+    // );
+
     // ARM
-    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
-    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 80));
-    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal));
+    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleVerticalDown));
+    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleMedium));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHigh));
+    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal));
 
     // CLIMB SETPOINT
     // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));

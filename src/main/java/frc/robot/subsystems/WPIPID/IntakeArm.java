@@ -18,6 +18,6 @@ public class IntakeArm extends WPIArm {
 
   @Override
   public double getAngleFromHorizontal(double encoderPos) {
-    return encoderPos - Constants.MotorConfig.armAngleHorizontal - (Constants.MotorConfig.armAngleAtRest - Constants.MotorConfig.armAngleVerticalDown);
+    return encoderPos - Constants.Setpoints.armAngleHorizontal - (Constants.Setpoints.armAngleAtRest - Constants.Setpoints.armAngleVerticalDown);
   }
 }
