@@ -15,6 +15,11 @@ public final class Utility {
   public static boolean teamColorIsRed() {
     return DriverStation.getAlliance().get() == DriverStation.Alliance.Red; 
   }
+  
+  // System clock time in seconds
+  public static double getTime() {
+    return Timer.getFPGATimestamp();
+  }
 
   public static double getMatchTime() {
     return Timer.getMatchTime();

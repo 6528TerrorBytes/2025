@@ -67,6 +67,10 @@ public class Elevator extends SubsystemBase {
     m_disabled = true;
   }
 
+  public double getPos() {
+    return m_motor.get();
+  }
+
   public void zeroEncoder() {
     m_encoder.setPosition(0);
   }

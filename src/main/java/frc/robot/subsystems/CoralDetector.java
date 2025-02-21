@@ -15,6 +15,9 @@ public class CoralDetector extends SubsystemBase {
     m_coralBeamBreak = new DigitalInput(Constants.DigitalInputs.coralDetector);
   }
 
+  /**
+   *Returns true when the beam is broken and there's a piece
+   */ 
   public boolean detected() {
     return !m_coralBeamBreak.get();
   }

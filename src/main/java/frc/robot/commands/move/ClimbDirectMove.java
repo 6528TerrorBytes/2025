@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SparkPID.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ClimbManualMove extends Command {
+public class ClimbDirectMove extends Command {
   private final Climb m_climb;
   private final double m_angle;
 
   /** Creates a new ClimbManualMove. */
-  public ClimbManualMove(Climb climb, double angle) {
+  public ClimbDirectMove(Climb climb, double angle) {
     m_climb = climb;
     m_angle = angle;
 

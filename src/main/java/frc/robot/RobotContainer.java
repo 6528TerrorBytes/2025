@@ -16,14 +16,15 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.move.ArmMove;
-import frc.robot.commands.move.ClimbManualMove;
-import frc.robot.commands.move.ClimbMove;
+import frc.robot.commands.move.ClimbDirectMove;
 import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
+import frc.robot.commands.move.MotorMoveTesting;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
+import frc.utils.JoystickAnalogButton;
 import frc.robot.subsystems.WPIPID.Elevator;
 import frc.robot.subsystems.SparkPID.Climb;
 
@@ -80,30 +81,32 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
     // ELEVATOR
-    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 6)); // old 18.5 inches was 5.5 setpoint
+    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 6.2)); // old 18.5 inches out was 5.5 setpoint
     new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, 2.15));
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, 0.1));
     
     // Zero elevator
     new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
 
+    // MANUAL ELEVATOR
+    new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.4));
+    new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.15));
+    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new ElevatorMove(m_elevator, m_arm, m_elevator.getPos()));
+
     // ARM
     new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown));
     new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleVerticalDown + 37));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 80)); // 18.5 inches
+    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal + 80));
+    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.MotorConfig.armAngleHorizontal));
 
     // CLIMB SETPOINT
     // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));
     // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 145));
 
-    new JoystickButton(otherJoystick, 1).whileFalse(new ClimbManualMove(m_climb, 140));
+    new JoystickButton(otherJoystick, 1).whileFalse(new ClimbDirectMove(m_climb, 140));
 
     // INTAKE
     new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
- 
-    // MANUAL ELEVATOR
-    // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.5));
-    // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.2));
     
     // MANUAL CLIMB
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));

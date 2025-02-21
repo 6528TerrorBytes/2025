@@ -55,7 +55,7 @@ public final class Constants {
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
     public static final double armTolerance = 8;
 
-    public static final double armAngleAtRest = 48; // angle it sits at with no power
+    public static final double armAngleAtRest = 42; // angle it sits at with no power
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
     public static final double armAngleVerticalDown = armAngleHorizontal - 90;
 
