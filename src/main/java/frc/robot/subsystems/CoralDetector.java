@@ -16,7 +16,7 @@ public class CoralDetector extends SubsystemBase {
   }
 
   /**
-   *Returns true when the beam is broken and there's a piece
+   * Returns true when the beam is broken and there's a piece
    */ 
   public boolean detected() {
     return !m_coralBeamBreak.get();

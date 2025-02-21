@@ -9,7 +9,6 @@ import frc.robot.Utility;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.IntakeMotor;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeMove extends Command {
   private final IntakeMotor m_intakeMotor;
   private final CoralDetector m_coralDetector;
