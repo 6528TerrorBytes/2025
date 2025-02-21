@@ -20,16 +20,16 @@ public final class Utility {
     return Timer.getMatchTime();
   }
   
-  public static boolean aprilTagInView() {
-    return LimelightHelpers.getTV("limelight");
+  public static boolean aprilTagInView(String limelight) {
+    return LimelightHelpers.getTV(limelight);
   }
 
-  public static double getAprilTagID() {
-    return LimelightHelpers.getFiducialID("limelight");
+  public static double getAprilTagID(String limelight) {
+    return LimelightHelpers.getFiducialID(limelight);
   }
   
-  public static boolean aprilTagIDIsInList(double[] list) {
-    double currentAprilTagID = getAprilTagID();
+  public static boolean aprilTagIDIsInList(String limelight, double[] list) {
+    double currentAprilTagID = getAprilTagID(limelight);
 
     for (double id : list)
       if (currentAprilTagID == id)
@@ -39,20 +39,20 @@ public final class Utility {
   }
 
   // Call this before using the robot field pose with MegaTag2
-  public static void setRobotOrientation(double rotation) {
-    LimelightHelpers.SetRobotOrientation("limelight", rotation, 0, 0, 0, 0, 0);
+  public static void setRobotOrientation(String limelight, double rotation) {
+    LimelightHelpers.SetRobotOrientation(limelight, rotation, 0, 0, 0, 0, 0);
   }
 
   // All of the different data you can get from the Limelight: https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
   
   // Bottom left of field is (0, 0). X is long-side distance, Y is short-side distance: https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems
-  public static PoseEstimate getRobotFieldPose() {
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight"); 
+  public static PoseEstimate getRobotFieldPose(String limelight) {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelight); 
   }
 
   // Z means distance out, X positive is camera-out right, while negative means left. Y is height
   // Rotation Y is horizontal rotation. Positive Y means the right side of the tag is closest to the robot (tag rotating clockwise)
-  public static Pose3d getTagPoseRelativeToBot() {
-    return LimelightHelpers.getTargetPose3d_RobotSpace("limelight");
+  public static Pose3d getTagPoseRelativeToBot(String limelight) {
+    return LimelightHelpers.getTargetPose3d_RobotSpace(limelight);
   }
 }

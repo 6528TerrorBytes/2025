@@ -80,7 +80,7 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
     // ELEVATOR
-    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 5.5));
+    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, 6)); // old 18.5 inches was 5.5 setpoint
     new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, 2.15));
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, 0.1));
     
@@ -121,8 +121,7 @@ public class RobotContainer {
     // sets up the Smartdashboard dropdown selector to pick which autonomous to run
     
     // List all the autos from Pathplanner here:
-    m_pathPlannerChooser.addOption("option 1", "yourmomauto1");
-    m_pathPlannerChooser.addOption("option 2", "yourmomauto2");
+    m_pathPlannerChooser.addOption("Pos testing", "Pos testing auto");
 
     SmartDashboard.putData("Select Pathplanner Auton", m_pathPlannerChooser);
   }
@@ -141,7 +140,7 @@ public class RobotContainer {
 
   public void updateSmartDashboard() {
     m_robotDrive.updateSmartDashboard();
-    SmartDashboard.putBoolean("April Tag In View", Utility.aprilTagInView());
+    SmartDashboard.putBoolean("April Tag In View", Utility.aprilTagInView("limelight-two"));
     SmartDashboard.putNumber("elevator", m_elevator.m_encoder.getPosition());
     SmartDashboard.putBoolean("Coral Detected", m_coralDetector.detected());
     SmartDashboard.putNumber("Arm Encoder", m_arm.m_encoder.getPosition());
