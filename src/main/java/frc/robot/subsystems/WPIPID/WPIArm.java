@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class WPIArm extends SubsystemBase {
   public final SparkMax m_motor;
@@ -26,6 +27,9 @@ public class WPIArm extends SubsystemBase {
   private final ProfiledPIDController m_controller;
   private final ArmFeedforward m_feedforward;
 
+  private final double m_tolerance;
+  private double m_goal;
+
   public WPIArm(int motorID, SparkMaxConfig config, double tolerance, double maxVel, double maxAcc, double p, double i, double d, double s, double g, double v) {
     m_trapezoidConfig = new TrapezoidProfile.Constraints(maxVel, maxAcc);
     m_controller = new ProfiledPIDController(p, i, d, m_trapezoidConfig);
@@ -35,7 +39,8 @@ public class WPIArm extends SubsystemBase {
     m_encoder = m_motor.getAbsoluteEncoder();
     m_disabled = true;
 
-    m_controller.setTolerance(tolerance);
+    m_tolerance = tolerance;
+
     m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -63,10 +68,13 @@ public class WPIArm extends SubsystemBase {
   public void setGoal(double goal) {
     m_controller.reset(m_encoder.getPosition()); // Fixes desync, very important
     m_controller.setGoal(goal);
+    m_goal = goal;
   }
 
   public boolean atGoal() {
-    return m_controller.atSetpoint();
+    double pos = getPos();
+    // Whether it's within plus/minus tolerance of the goal
+    return (pos > m_goal - m_tolerance) && (pos < m_goal + m_tolerance);
   }
 
   public double getPos() {

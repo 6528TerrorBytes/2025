@@ -22,6 +22,7 @@ public final class Constants {
     // Elevator setpoints
     public static final double elevatorZero = 0.1;
     public static final double elevatorMedium = 2.15;
+    public static final double elevatorGrabSecond = 4.5;
     public static final double elevatorHigh = 6.2;
 
     // Arm config angles    
@@ -32,9 +33,12 @@ public final class Constants {
     public static final double armAngleVerticalDown = armAngleHorizontal - 90;
     public static final double armAngleMedium = armAngleVerticalDown + 37;
     public static final double armAngleHigh = armAngleHorizontal + 80;
+    public static final double armAngleHoldAlgae = armAngleHorizontal - 25;
+
+    public static final double armElevatorMoveAngle = 52; // Arm needs to be greater than this angle before the elevator is allowed to move
 
     // Algae fork setpoint angles
-    public static final double algaeForkHorizontal = 114;
+    public static final double algaeForkHorizontal = 119;
     public static final double algaeForkZero = algaeForkHorizontal - 90;
   }
 
@@ -97,7 +101,7 @@ public final class Constants {
     
     // intake arm
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
-    public static final double armTolerance = 9;
+    public static final double armTolerance = 5; // Might need to be greater to account for error
 
     static {
       armConfig
@@ -111,13 +115,13 @@ public final class Constants {
     }
 
     public static final SparkMaxConfig algaeForkConfig = new SparkMaxConfig();
-    public static final double algaeForkTolerance = 9;
+    public static final double algaeForkTolerance = 5;
 
     static {
       algaeForkConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(30)
-        .inverted(true);
+        .inverted(false);
       algaeForkConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60)

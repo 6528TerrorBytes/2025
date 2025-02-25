@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveToAprilTag;
@@ -50,8 +51,7 @@ public class RobotContainer {
   private final Climb m_climb = new Climb();
   private final Elevator m_elevator = new Elevator();
   private final IntakeArm m_arm = new IntakeArm();
-  private final SparkMax m_algaeFork = new SparkMax(Constants.MotorIDs.algaeForkID, MotorType.kBrushless);
-  // private final AlgaeFork m_algaeFork = new AlgaeFork();
+  private final AlgaeFork m_algaeFork = new AlgaeFork();
   private final IntakeMotor m_intakeMotor = new IntakeMotor();
 
   private final CoralDetector m_coralDetector = new CoralDetector();
@@ -92,6 +92,7 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
     // ELEVATOR
+    new JoystickButton(leftJoystick, 14).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond));
     new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh));
     new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium));
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
@@ -119,6 +120,24 @@ public class RobotContainer {
     //   )
     // );
 
+    // Sequential command testing
+    new JoystickButton(leftJoystick, 2).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond),
+        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+
+        new ParallelCommandGroup( // Wait half a second before moving out algae fork
+          new WaitCommand(0.3),
+          new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkHorizontal)
+        )
+      )
+    ));
+
+    new JoystickButton(leftJoystick, 3).whileTrue(new SequentialCommandGroup(
+      new ArmMove(m_arm, Constants.Setpoints.armAngleHoldAlgae),
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond + 0.4))
+    );
+
     new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, true));
 
     // ARM
@@ -126,12 +145,12 @@ public class RobotContainer {
     new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleMedium));
     new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHigh));
     new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal));
+    new JoystickButton(leftJoystick, 9).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHoldAlgae));
 
     // ALGAE FORK
-    // new JoystickButton(rightJoystick, 5).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkZero));
-    // new JoystickButton(rightJoystick, 6).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkHorizontal));
-    new JoystickButton(rightJoystick, 5).whileTrue(new MotorMoveTesting(m_algaeFork, -1));
-    new JoystickButton(rightJoystick, 6).whileTrue(new MotorMoveTesting(m_algaeFork, 1));
+    new JoystickButton(rightJoystick, 5).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkZero));
+    new JoystickButton(rightJoystick, 6).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkHorizontal - 25));
+    new JoystickButton(rightJoystick, 7).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkHorizontal));
 
     // CLIMB SETPOINT
     // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));

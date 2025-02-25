@@ -36,6 +36,7 @@ public class ArmMove extends Command {
   @Override
   public void end(boolean interrupted) {
     // m_arm.disable();
+    System.out.println("Arm angle reached! ");
   }
 
   // Returns true when the command should end.
@@ -43,6 +44,6 @@ public class ArmMove extends Command {
   public boolean isFinished() {
     SmartDashboard.putBoolean("Arm atGoal", m_arm.atGoal());
 
-    return false;
+    return m_arm.atGoal();
   }
 }

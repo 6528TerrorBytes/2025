@@ -12,8 +12,8 @@ public class AlgaeFork extends WPIArm {
     super(
       Constants.MotorIDs.algaeForkID, Constants.MotorConfig.algaeForkConfig, Constants.MotorConfig.algaeForkTolerance,
       1000, 1000,
-      10, 0, 0,
-      0, 50, 0
+      0.12, 0, 0,
+      0, 0, 0
     );
   }
 

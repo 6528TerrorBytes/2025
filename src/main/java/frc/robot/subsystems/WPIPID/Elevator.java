@@ -21,6 +21,7 @@ public class Elevator extends SubsystemBase {
   public final RelativeEncoder m_encoder;
 
   private boolean m_disabled;
+  private double m_goal;
 
   // Configuration
   private final TrapezoidProfile.Constraints m_trapezoidConfig = new TrapezoidProfile.Constraints(20, 16);
@@ -34,7 +35,6 @@ public class Elevator extends SubsystemBase {
     m_encoder = m_motor.getAlternateEncoder();
     m_disabled = true;
 
-    m_controller.setTolerance(Constants.MotorConfig.elevatorTolerance);
     m_motor.configure(Constants.MotorConfig.elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -52,10 +52,12 @@ public class Elevator extends SubsystemBase {
     // Fixes desync between controller & position:
     m_controller.reset(m_encoder.getPosition()); // Fixes an issue where after a period of being disabled and the elevator moving, the position goes backwards for a bit when setting new goal.
     m_controller.setGoal(goal);
+    m_goal = goal;
   }
 
   public boolean atGoal() {
-    return m_controller.atSetpoint();
+    double pos = getPos();
+    return (pos > m_goal - Constants.MotorConfig.elevatorTolerance) && (pos < m_goal + Constants.MotorConfig.elevatorTolerance);
   }
   
   public void enable() {
