@@ -5,6 +5,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -42,6 +45,26 @@ public final class Constants {
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
     public static final Translation2d coralOffset = new Translation2d(0.2, 0.5);
     public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
+
+    public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
+
+    static {
+      // blue side apriltags 
+      aprilTagFaceAngles.put(Double.valueOf(17), Double.valueOf(60));
+      aprilTagFaceAngles.put(Double.valueOf(18), Double.valueOf(0));
+      aprilTagFaceAngles.put(Double.valueOf(19), Double.valueOf(-60));
+      aprilTagFaceAngles.put(Double.valueOf(20), Double.valueOf(-120));
+      aprilTagFaceAngles.put(Double.valueOf(21), Double.valueOf(180));
+      aprilTagFaceAngles.put(Double.valueOf(22), Double.valueOf(120));
+
+      // red side apriltags
+      aprilTagFaceAngles.put(Double.valueOf(11), Double.valueOf(60));
+      aprilTagFaceAngles.put(Double.valueOf(10), Double.valueOf(0));
+      aprilTagFaceAngles.put(Double.valueOf(9), Double.valueOf(-60));
+      aprilTagFaceAngles.put(Double.valueOf(8), Double.valueOf(-120));
+      aprilTagFaceAngles.put(Double.valueOf(7), Double.valueOf(180));
+      aprilTagFaceAngles.put(Double.valueOf(6), Double.valueOf(120));
+    }
   }
 
   public static final class MotorIDs {

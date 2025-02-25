@@ -36,20 +36,25 @@ public class DriveToAprilTag extends Command {
   }
 
   // Checking for the AprilTag ID corresponding to the current team color
-  public static boolean coralTagInView() {
-    return (Utility.aprilTagInView("limelight-two") &&
+  public static double coralTagInView() {
+    if ((Utility.aprilTagInView("limelight-two") &&
       (
         (Utility.teamColorIsRed() && Utility.aprilTagIDIsInList("limelight-two", Constants.AprilTags.coralRedTags)) ||
         (Utility.aprilTagIDIsInList("limelight-two", Constants.AprilTags.coralBlueTags))
       )
-    );
+    )) {
+      return Utility.getAprilTagID("limelight-two");
+    }
+
+    return -1;
   }
 
   // Finds the field position of the robot facing the AprilTag, lined up to the coral.
   // MATHS DESMOS: https://www.desmos.com/calculator/uagr4pd9gv
-  public static Pose2d findGoalPos(Pose2d robotPos, Pose2d aprilTagPos, boolean leftSide) {
+  public static Pose2d findGoalPos(Pose2d robotPos, Pose2d aprilTagPos, boolean leftSide, double aprilTagId) {
     double robotRot = robotPos.getRotation().getRadians();
-    double faceTagAngle = robotRot - aprilTagPos.getRotation().getRadians(); // robotRot - tagRot, finds angle to face the AprilTag
+    // double faceTagAngle = robotRot - aprilTagPos.getRotation().getRadians(); // robotRot - tagRot, finds angle to face the AprilTag
+    double faceTagAngle = Constants.AprilTags.aprilTagFaceAngles.get(aprilTagId);
     
     // Calculate the AprilTag's position on the field
     Translation2d tagFieldPos = new Translation2d(
@@ -75,7 +80,7 @@ public class DriveToAprilTag extends Command {
     return new Pose2d(finalGoalPos, Rotation2d.fromRadians(faceTagAngle));
   }
 
-  public static Pose2d calculateGoalPos(Pose2d robotPos, boolean leftSide) {
+  public static Pose2d calculateGoalPos(Pose2d robotPos, boolean leftSide, double aprilTagID) {
     Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot("limelight-two");
     
     // Convert AprilTag Pose3d to Pose2d
@@ -83,7 +88,7 @@ public class DriveToAprilTag extends Command {
     Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
   
     // Calculate goal pose
-    return findGoalPos(robotPos, aprilTagPose, leftSide);
+    return findGoalPos(robotPos, aprilTagPose, leftSide, aprilTagID);
   }
 
   @Override
@@ -94,16 +99,16 @@ public class DriveToAprilTag extends Command {
   @Override
   public void execute() {
     if (!m_foundTag) {
-      if (!coralTagInView()) { return; } // Exit if no AprilTag in view
+      double aprilTagID = coralTagInView();
+      if (aprilTagID < 0) return; // exit if no apriltag found
 
       m_foundTag = true;
       Pose2d robotPos = m_driveSubsystem.getPose();
 
-      Pose2d goalPos = calculateGoalPos(robotPos, m_leftSide);
+      Pose2d goalPos = calculateGoalPos(robotPos, m_leftSide, aprilTagID);
 
       // Add goal pose to robot pos
-      goalPos = new Pose2d(goalPos.getX() + robotPos.getX(), goalPos.getY() + robotPos.getY(),
-                           Rotation2d.fromDegrees(goalPos.getRotation().getDegrees() + robotPos.getRotation().getDegrees()));
+      goalPos = new Pose2d(goalPos.getX() + robotPos.getX(), goalPos.getY() + robotPos.getY(), goalPos.getRotation());
 
       // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
 

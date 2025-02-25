@@ -185,8 +185,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 
       // show the apriltag calculated position
-      if (DriveToAprilTag.coralTagInView()) {
-        Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), true);
+      double tagID = DriveToAprilTag.coralTagInView();
+      if (tagID >= 0) {
+        Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), true, tagID);
 
         // Add to robot's current field position
         Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + currentPos.getX(), apriltagpose.getY() + currentPos.getY(),
