@@ -4,28 +4,25 @@
 
 package frc.robot.commands.move;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.WPIPID.IntakeArm;
+import frc.robot.subsystems.WPIPID.AlgaeFork;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ArmMove extends Command {
-  private final IntakeArm m_arm; 
-  private final double m_setPoint;
+public class AlgaeForkMove extends Command {
+  private final AlgaeFork m_algaeFork;
+  private final double m_setpoint;
 
-  /** Creates a new ArmMove. */
-  public ArmMove(IntakeArm arm, double setPoint) {
-    m_arm = arm;
-    m_setPoint = setPoint;
-
-    addRequirements(arm);
+  /** Creates a new AlgaeForkMove. */
+  public AlgaeForkMove(AlgaeFork algaeFork, double setpoint) {
+    m_algaeFork = algaeFork;
+    m_setpoint = setpoint;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.enable();
-    m_arm.setGoal(m_setPoint);
+    m_algaeFork.enable();
+    m_algaeFork.setGoal(m_setpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,14 +32,12 @@ public class ArmMove extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // m_arm.disable();
+    m_algaeFork.disable();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    SmartDashboard.putBoolean("Arm atGoal", m_arm.atGoal());
-
     return false;
   }
 }

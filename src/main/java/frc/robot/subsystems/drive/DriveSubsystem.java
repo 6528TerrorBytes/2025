@@ -32,6 +32,7 @@ import frc.utils.SwerveUtils;
 import frc.robot.Utility;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.commands.DriveToAprilTag;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import frc.robot.subsystems.MAXSwerveModule;
@@ -78,6 +79,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Field object for Shuffleboard
   private final Field2d m_field = new Field2d();
+  private final Field2d m_field2 = new Field2d();
 
   // Odometry class for tracking robot pose
   // https://first.wpi.edu/wpilib/allwpilib/docs/beta/java/edu/wpi/first/math/estimator/SwerveDrivePoseEstimator.html
@@ -96,7 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Making these too low will result in jittery pose estimation (see Smartdashboard for pose estimation location),
     // Whereas too high will result in the pose not adjusting for vision data quick enough. Adjust these as needed
     VecBuilder.fill(0.1, 0.1, 0.1), // x, y, rotation for encoder pos (I think)
-    VecBuilder.fill(0.9, 0.9, 0.9)  // x, y, rotation for vision data
+    VecBuilder.fill(0.2, 0.2, 0.25) // x, y, rotation for vision data
   );
 
   /** Creates a new DriveSubsystem. */
@@ -162,6 +164,8 @@ public class DriveSubsystem extends SubsystemBase {
       }
     );
 
+    Pose2d currentPos = getPose();
+
     // Add vision measurement to odometry calculation if an AprilTag is visible
     // Example: https://www.chiefdelphi.com/t/introducing-megatag2-by-limelight-vision/461243
     // Documetation: https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
@@ -176,12 +180,25 @@ public class DriveSubsystem extends SubsystemBase {
       // Decrease the first and second numbers to trust limelight data more
       // TUNING STD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
       // Making these too low will result in jittery pose estimation, too high results in not adjusting for vision data too quickly. Adjust as needed
-      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
+      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(0.2, 0.2,9999999));
       m_odometry.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
-      
-      // Update SmartDashboard field position
-      m_field.setRobotPose(poseEstimate.pose);
+
+
+      // show the apriltag calculated position
+      if (DriveToAprilTag.coralTagInView()) {
+        Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), true);
+
+        // Add to robot's current field position
+        Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + currentPos.getX(), apriltagpose.getY() + currentPos.getY(),
+                                               Rotation2d.fromDegrees(apriltagpose.getRotation().getDegrees() + currentPos.getRotation().getDegrees()));
+
+        m_field2.setRobotPose(apriltagPlusBotPos);
+        SmartDashboard.putData("AprilTagPos", m_field2);
+      }
     }
+    
+    // Update SmartDashboard field position
+    m_field.setRobotPose(currentPos);
   }
 
   public void updateSmartDashboard() {

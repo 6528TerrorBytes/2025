@@ -9,6 +9,12 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public final class Constants {
+  // height to the arm joint: 33.375 inches
+  // 2.15: 46 + 1/16
+  // 6.2: 70.5
+
+  // 5.95 inches per rotation
+
   public static final class Setpoints {
     // Elevator setpoints
     public static final double elevatorZero = 0.1;
@@ -22,7 +28,11 @@ public final class Constants {
     // Arm setpoint angles
     public static final double armAngleVerticalDown = armAngleHorizontal - 90;
     public static final double armAngleMedium = armAngleVerticalDown + 37;
-    public static final double armAngleHigh = armAngleVerticalDown + 80;
+    public static final double armAngleHigh = armAngleHorizontal + 80;
+
+    // Algae fork setpoint angles
+    public static final double algaeForkHorizontal = 114;
+    public static final double algaeForkZero = algaeForkHorizontal - 90;
   }
 
   public static final class AprilTags {
@@ -30,7 +40,7 @@ public final class Constants {
     public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
 
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
-    public static final Translation2d coralOffset = new Translation2d(0.5, 1);
+    public static final Translation2d coralOffset = new Translation2d(0.2, 0.5);
     public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
   }
 
@@ -40,6 +50,7 @@ public final class Constants {
     public static final int elevatorID = 4;
     public static final int armID = 5;
     public static final int intakeMotorID = 6;
+    public static final int algaeForkID = 7;
   }
 
   public static final class DigitalInputs {
@@ -56,13 +67,14 @@ public final class Constants {
         .smartCurrentLimit(35)
         .inverted(false);
       elevatorConfig.alternateEncoder
-        .positionConversionFactor(1)
-        .velocityConversionFactor(1)
+        .positionConversionFactor(1) // 5.95 conversion inches
+        .velocityConversionFactor(1) // 5.95 conversion inches
         .inverted(true);
     }
     
+    // intake arm
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
-    public static final double armTolerance = 8;
+    public static final double armTolerance = 9;
 
     static {
       armConfig
@@ -70,6 +82,20 @@ public final class Constants {
         .smartCurrentLimit(35)
         .inverted(false);
       armConfig.absoluteEncoder
+        .positionConversionFactor(360)
+        .velocityConversionFactor(360 / 60)
+        .inverted(false);
+    }
+
+    public static final SparkMaxConfig algaeForkConfig = new SparkMaxConfig();
+    public static final double algaeForkTolerance = 9;
+
+    static {
+      algaeForkConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(30)
+        .inverted(true);
+      algaeForkConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60)
         .inverted(false);

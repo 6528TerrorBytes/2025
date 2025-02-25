@@ -17,7 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WPIArm extends SubsystemBase {
-  private final SparkMax m_motor;
+  public final SparkMax m_motor;
   public final AbsoluteEncoder m_encoder;
 
   private boolean m_disabled;

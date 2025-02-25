@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
@@ -18,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DriveToAprilTag;
+import frc.robot.commands.move.AlgaeForkMove;
 import frc.robot.commands.move.ArmMove;
 import frc.robot.commands.move.ClimbDirectMove;
 import frc.robot.commands.move.ElevatorMove;
@@ -28,6 +32,7 @@ import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.utils.JoystickAnalogButton;
+import frc.robot.subsystems.WPIPID.AlgaeFork;
 import frc.robot.subsystems.WPIPID.Elevator;
 import frc.robot.subsystems.SparkPID.Climb;
 
@@ -45,6 +50,8 @@ public class RobotContainer {
   private final Climb m_climb = new Climb();
   private final Elevator m_elevator = new Elevator();
   private final IntakeArm m_arm = new IntakeArm();
+  private final SparkMax m_algaeFork = new SparkMax(Constants.MotorIDs.algaeForkID, MotorType.kBrushless);
+  // private final AlgaeFork m_algaeFork = new AlgaeFork();
   private final IntakeMotor m_intakeMotor = new IntakeMotor();
 
   private final CoralDetector m_coralDetector = new CoralDetector();
@@ -80,6 +87,7 @@ public class RobotContainer {
     // new JoystickButton(leftJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, false));
     
     // Reset gyro
+    // new JoystickButton(rightJoystick, 15).onTrue(new InstantCommand(() -> m_robotDrive.resetOdometry()));
     new JoystickButton(rightJoystick, 16).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
@@ -111,16 +119,25 @@ public class RobotContainer {
     //   )
     // );
 
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, true));
+
     // ARM
     new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleVerticalDown));
     new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleMedium));
     new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHigh));
     new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal));
 
+    // ALGAE FORK
+    // new JoystickButton(rightJoystick, 5).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkZero));
+    // new JoystickButton(rightJoystick, 6).whileTrue(new AlgaeForkMove(m_algaeFork, Constants.Setpoints.algaeForkHorizontal));
+    new JoystickButton(rightJoystick, 5).whileTrue(new MotorMoveTesting(m_algaeFork, -1));
+    new JoystickButton(rightJoystick, 6).whileTrue(new MotorMoveTesting(m_algaeFork, 1));
+
     // CLIMB SETPOINT
     // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));
     // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 145));
 
+    // CLIMB DIRECT MOVE
     new JoystickButton(otherJoystick, 1).whileFalse(new ClimbDirectMove(m_climb, 140));
 
     // INTAKE
@@ -165,6 +182,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("elevator", m_elevator.m_encoder.getPosition());
     SmartDashboard.putBoolean("Coral Detected", m_coralDetector.detected());
     SmartDashboard.putNumber("Arm Encoder", m_arm.m_encoder.getPosition());
+    // SmartDashboard.putNumber("Algae Forks", m_algaeFork.m_encoder.getPosition());
     SmartDashboard.putNumber("Gyro", m_robotDrive.getRawAngle());
     m_climb.updateSmartDashboard();
   }

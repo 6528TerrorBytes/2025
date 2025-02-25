@@ -75,23 +75,36 @@ public class DriveToAprilTag extends Command {
     return new Pose2d(finalGoalPos, Rotation2d.fromRadians(faceTagAngle));
   }
 
+  public static Pose2d calculateGoalPos(Pose2d robotPos, boolean leftSide) {
+    Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot("limelight-two");
+    
+    // Convert AprilTag Pose3d to Pose2d
+    //                               TAG OUT DIST        TAG HORIZONTAL DIST
+    Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
+  
+    // Calculate goal pose
+    return findGoalPos(robotPos, aprilTagPose, leftSide);
+  }
+
+  @Override
+  public void initialize() {
+    m_foundTag = false;
+  }
+
   @Override
   public void execute() {
     if (!m_foundTag) {
       if (!coralTagInView()) { return; } // Exit if no AprilTag in view
 
       m_foundTag = true;
-
       Pose2d robotPos = m_driveSubsystem.getPose();
-      Pose3d tagBotSpace = Utility.getTagPoseRelativeToBot("limelight-two");
-      
-      // Convert AprilTag Pose3d to Pose2d
-      //                               TAG OUT DIST        TAG HORIZONTAL DIST
-      Pose2d aprilTagPose = new Pose2d(tagBotSpace.getZ(), tagBotSpace.getX(), Rotation2d.fromRadians(tagBotSpace.getRotation().getY()));
-    
-      // Calculate goal pose
-      Pose2d goalPos = findGoalPos(robotPos, aprilTagPose, m_leftSide);
-  
+
+      Pose2d goalPos = calculateGoalPos(robotPos, m_leftSide);
+
+      // Add goal pose to robot pos
+      goalPos = new Pose2d(goalPos.getX() + robotPos.getX(), goalPos.getY() + robotPos.getY(),
+                           Rotation2d.fromDegrees(goalPos.getRotation().getDegrees() + robotPos.getRotation().getDegrees()));
+
       // https://pathplanner.dev/pplib-create-a-path-on-the-fly.html:
 
       // Create path from current robot position to the new position
@@ -114,6 +127,8 @@ public class DriveToAprilTag extends Command {
 
       path.preventFlipping = true;
       m_path = AutoBuilder.followPath(path);
+      // m_path.initialize();
+      m_path.schedule();
   
       // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
       // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
@@ -121,18 +136,19 @@ public class DriveToAprilTag extends Command {
     }
 
     // Basically just wrapping m_path in this external command now.
-    m_path.execute();
+    // m_path.execute();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (m_foundTag) {
-      m_path.end(interrupted);
+      // m_path.end(interrupted);
     }
   }
 
   @Override
   public boolean isFinished() {
-    return m_foundTag && m_path.isFinished();
+    // return m_foundTag && m_path.isFinished();
+    return m_foundTag;
   }
 }
