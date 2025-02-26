@@ -48,15 +48,12 @@ public class ElevatorMove extends Command {
   @Override
   public void end(boolean interrupted) {
     // m_elevator.disable();
+    System.out.println("Elevator position reached");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_hasMoved && m_elevator.atGoal()) {
-      System.out.println("Elevator position reached");
-    }
-
     return m_hasMoved && m_elevator.atGoal();
   }
 }

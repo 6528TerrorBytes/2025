@@ -25,6 +25,8 @@ public final class Constants {
     public static final double elevatorGrabSecond = 4.5;
     public static final double elevatorHigh = 6.2;
 
+    public static final double elevatorAlgaeFlapMovePos = 1.5;
+
     // Arm config angles    
     public static final double armAngleAtRest = 42; // angle it sits at with no power
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
@@ -86,7 +88,7 @@ public final class Constants {
 
   public static final class MotorConfig {
     public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-    public static final double elevatorTolerance = 8;
+    public static final double elevatorTolerance = 0.1;
 
     static {
       elevatorConfig

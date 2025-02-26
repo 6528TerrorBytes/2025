@@ -132,28 +132,27 @@ public class DriveToAprilTag extends Command {
 
       path.preventFlipping = true;
       m_path = AutoBuilder.followPath(path);
-      // m_path.initialize();
-      m_path.schedule();
-  
+      
       // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
       // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
-      // m_path.initialize();
-    }
 
-    // Basically just wrapping m_path in this external command now.
-    // m_path.execute();
+      m_path.initialize();
+      // m_path.schedule();
+    } else {
+      // Basically just wrapping m_path in this external command now lol
+      m_path.execute();
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
     if (m_foundTag) {
-      // m_path.end(interrupted);
+      m_path.end(interrupted);
     }
   }
 
   @Override
   public boolean isFinished() {
-    // return m_foundTag && m_path.isFinished();
-    return m_foundTag;
+    return m_foundTag && m_path.isFinished();
   }
 }

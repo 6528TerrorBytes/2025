@@ -70,7 +70,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPos() {
-    return m_motor.get();
+    return m_encoder.getPosition();
   }
 
   public void zeroEncoder() {

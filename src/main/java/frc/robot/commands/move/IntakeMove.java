@@ -15,7 +15,7 @@ public class IntakeMove extends Command {
 
   private boolean m_startDetected;
 
-  private final double m_stopDelay = 0; // seconds delay between the beam state changing and the intake motor stopping
+  private final double m_stopDelay = 0.2; // seconds delay between the beam state changing and the intake motor stopping
   private double m_stopTime;
 
   public IntakeMove(IntakeMotor intakeMotor, CoralDetector coralDetector) {
