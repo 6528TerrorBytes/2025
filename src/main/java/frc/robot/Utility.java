@@ -60,4 +60,12 @@ public final class Utility {
   public static Pose3d getTagPoseRelativeToBot(String limelight) {
     return LimelightHelpers.getTargetPose3d_RobotSpace(limelight);
   }
+
+  public static void turnOnLimelightLED() {
+    LimelightHelpers.setLEDMode_ForceOn("limelight-two");
+  }
+
+  public static void turnOffLimelightLED() {
+    LimelightHelpers.setLEDMode_ForceOff("limelight-two");
+  }
 }

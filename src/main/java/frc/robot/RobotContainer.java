@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.BlinkinCommand;
 import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
 import frc.robot.commands.move.AlgaeForkMove;
@@ -31,6 +32,7 @@ import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
 import frc.robot.commands.move.MotorMoveTesting;
 import frc.robot.commands.move.TailArmMove;
+import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
@@ -61,6 +63,9 @@ public class RobotContainer {
 
   private final CoralDetector m_coralDetector = new CoralDetector();
 
+  private final Blinkin m_blinkin = new Blinkin();
+  private final BlinkinCommand m_blinkinCommand = new BlinkinCommand(m_blinkin, m_coralDetector);
+
   // Shared commands -- used in both joysticks and autons
   private Command c_dunkScore;
   
@@ -72,6 +77,8 @@ public class RobotContainer {
 
     setDriveCommand();
     configureControllerBindings();
+
+    m_blinkin.setDefaultCommand(m_blinkinCommand);
   }
 
   public void setDriveCommand() {

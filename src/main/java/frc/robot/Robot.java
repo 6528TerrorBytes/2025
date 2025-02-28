@@ -13,6 +13,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.BlinkinCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -79,7 +80,10 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    BlinkinCommand.setTeleop(false);
+    Utility.turnOffLimelightLED();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -87,12 +91,15 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    Utility.turnOnLimelightLED();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    BlinkinCommand.setTeleop(false);
   }
 
   /** This function is called periodically during autonomous. */
@@ -101,6 +108,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    Utility.turnOnLimelightLED();
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -108,6 +117,8 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    BlinkinCommand.setTeleop(true);
   }
 
   /** This function is called periodically during operator control. */
@@ -118,6 +129,8 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    
+    BlinkinCommand.setTeleop(false);
   }
 
   /** This function is called periodically during test mode. */
@@ -126,7 +139,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    BlinkinCommand.setTeleop(false);
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

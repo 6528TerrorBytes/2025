@@ -93,10 +93,23 @@ public final class Constants {
     public static final int intakeMotorID = 6;
     public static final int algaeForkID = 7;
     public static final int tailArmID = 8;
+    public static final int tailIntakeID = 9;
   }
 
   public static final class DigitalInputs {
     public static final int coralDetector = 0;
+  }
+
+  public static final class BlinkinConfig {
+    public static final int id = 0;
+
+    // Color numbers PDF at the bottom of: https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf
+    public static final double blue = 0.87;
+    public static final double red = 0.61;
+    public static final double green = 0.77;
+
+    public static final double strobeRed = -0.11;
+    public static final double strobeBlue = -0.09;
   }
 
   public static final class MotorConfig {
