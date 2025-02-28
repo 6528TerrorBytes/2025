@@ -45,6 +45,11 @@ public final class Constants {
     public static final double algaeForkHorizontal = 119;
     public static final double algaeForkZero = algaeForkHorizontal - 95;
 
+    // Tail arm setpoint angles
+    public static final double tailArmHorizontal = 0;
+    public static final double tailArmVertical = tailArmHorizontal + 90;
+    public static final double tailArmStartingAngle = tailArmHorizontal + 110;
+
     // Intake motor stop delays
     public static final double m_intakeMotorStopDelayPickup = 0.1;
     public static final double m_intakeMotorStopDelayDunk = 0.5;
@@ -87,6 +92,7 @@ public final class Constants {
     public static final int armID = 5;
     public static final int intakeMotorID = 6;
     public static final int algaeForkID = 7;
+    public static final int tailArmID = 8;
   }
 
   public static final class DigitalInputs {
@@ -132,6 +138,20 @@ public final class Constants {
         .smartCurrentLimit(30)
         .inverted(false);
       algaeForkConfig.absoluteEncoder
+        .positionConversionFactor(360)
+        .velocityConversionFactor(360 / 60)
+        .inverted(false);
+    }
+
+    public static final SparkMaxConfig tailArmConfig = new SparkMaxConfig();
+    public static final double tailArmTolerance = 5;
+
+    static {
+      tailArmConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(30)
+        .inverted(false);
+      tailArmConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60)
         .inverted(false);

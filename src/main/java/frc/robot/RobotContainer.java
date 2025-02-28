@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -29,9 +30,11 @@ import frc.robot.commands.move.ClimbDirectMove;
 import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
 import frc.robot.commands.move.MotorMoveTesting;
+import frc.robot.commands.move.TailArmMove;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.IntakeMotor;
 import frc.robot.subsystems.WPIPID.IntakeArm;
+import frc.robot.subsystems.WPIPID.TailArm;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.utils.JoystickAnalogButton;
 import frc.robot.subsystems.WPIPID.AlgaeFork;
@@ -54,10 +57,16 @@ public class RobotContainer {
   private final IntakeArm m_arm = new IntakeArm();
   private final AlgaeFork m_algaeFork = new AlgaeFork();
   private final IntakeMotor m_intakeMotor = new IntakeMotor();
+  private final TailArm m_tailArm = new TailArm();
 
   private final CoralDetector m_coralDetector = new CoralDetector();
+
+  // Shared commands -- used in both joysticks and autons
+  private Command c_dunkScore;
   
   public RobotContainer() {
+    configureSharedCommands();
+
     registerPathplannerCommands();
     setupPathplannerSelector();
 
@@ -77,6 +86,25 @@ public class RobotContainer {
       )
     );
     // ); // Call of duty (:<
+  }
+
+  // Commands that are used in both autos and in joystick buttons
+  private void configureSharedCommands() {
+    
+    // Dunk the coral L4
+    c_dunkScore = new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      ),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal),
+      new ParallelCommandGroup(
+        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      ),
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
+    );
+
   }
   
   private void configureControllerBindings() {
@@ -108,27 +136,29 @@ public class RobotContainer {
 
     // High shooting mockup automation
     // new SequentialCommandGroup(
-    //   new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+    //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
     //   new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
 
     //   // here: position the robot next to the reef properly
     
-    //   new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal),
+    //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal),
       
     //   new ParallelDeadlineGroup( // Shoot then pull arm back
-    //     new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+    //     new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
     //     new IntakeMove(m_intakeMotor, m_coralDetector)
     //   )
     // );
 
+    // Algae 2nd level grab start position
     new JoystickButton(leftJoystick, 2).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond),
-      new ArmMove(m_arm, Constants.Setpoints.armAngleHigh),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
     ));
 
+    // Algae 2nd level grab and lift up
     new JoystickButton(leftJoystick, 3).whileTrue(new ParallelCommandGroup(
-      new ArmMove(m_arm, Constants.Setpoints.armAngleHoldAlgae),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
@@ -136,50 +166,48 @@ public class RobotContainer {
       )
     ));
 
+    // Coral intake arm + elevator position
     new JoystickButton(leftJoystick, 4).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium),
-      new ArmMove(m_arm, Constants.Setpoints.armAngleMedium)
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMedium)
     ));
 
-    new JoystickButton(rightJoystick, 2).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
-        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
-      ),
-      new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal),
-      new ParallelCommandGroup(
-        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
-        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
-      ),
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
-    ));
+    // Dunk the coral L4
+    new JoystickButton(rightJoystick, 2).whileTrue(c_dunkScore);
 
+    // Score L3
     new JoystickButton(rightJoystick, 3).whileTrue(new SequentialCommandGroup(
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
-        new ArmMove(m_arm, Constants.Setpoints.armAngleMiddleHigh)
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
       ),
       new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
       )
     ));
 
+    // Drive to score coral, left and right sides
     new JoystickButton(otherJoystick, 5).whileTrue(new DriveToAprilTag(m_robotDrive, true));
     new JoystickButton(otherJoystick, 6).whileTrue(new DriveToAprilTag(m_robotDrive, false));
 
     // ARM
-    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleVerticalDown));
-    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleMedium));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHigh));
-    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal));
-    new JoystickButton(leftJoystick, 9).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleHoldAlgae));
+    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleVerticalDown));
+    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMedium));
+    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
+    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal));
+    new JoystickButton(leftJoystick, 9).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae));
 
     // ALGAE FORK
     new JoystickButton(rightJoystick, 5).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero));
     new JoystickButton(rightJoystick, 6).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 25));
     new JoystickButton(rightJoystick, 7).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal));
+
+    // TAIL ARM
+    new JoystickButton(rightJoystick, 10).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmHorizontal));
+    new JoystickButton(rightJoystick, 8).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
+
 
     // CLIMB SETPOINT
     // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));
@@ -200,7 +228,13 @@ public class RobotContainer {
   }
 
   private void registerPathplannerCommands() {
-    // register pathplanner commands here when we get there
+    // Register commands used in Pathplanner autos
+    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTag(m_robotDrive, true));
+    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTag(m_robotDrive, false));
+
+    NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
+
+    NamedCommands.registerCommand("dunkScoreL4", c_dunkScore);
   }
 
   private void setupPathplannerSelector() {
@@ -208,6 +242,7 @@ public class RobotContainer {
     
     // List all the autos from Pathplanner here:
     m_pathPlannerChooser.addOption("Pos testing", "Pos testing auto");
+    m_pathPlannerChooser.addOption("Center Score", "Center Score");
 
     SmartDashboard.putData("Select Pathplanner Auton", m_pathPlannerChooser);
   }
