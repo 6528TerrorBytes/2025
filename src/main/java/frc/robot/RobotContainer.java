@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
 import frc.robot.commands.move.AlgaeForkMove;
 import frc.robot.commands.move.ArmMove;
@@ -79,7 +80,7 @@ public class RobotContainer {
   }
   
   private void configureControllerBindings() {
-    // new JoystickButton(rightJoystick, 2).whileTrue(new DriveSpeedChange(0.5));
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveSpeedChange(0.5));
 
     // new JoystickButton(leftJoystick, 1).whileTrue(new ElevatorMove(m_elevator, 20));
     // new JoystickButton(leftJoystick, 2).whileTrue(new ElevatorMove(m_elevator, 0));
@@ -98,7 +99,7 @@ public class RobotContainer {
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
     
     // Zero elevator
-    new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
+    // new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
 
     // MANUAL ELEVATOR
     new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.4));
@@ -135,7 +136,38 @@ public class RobotContainer {
       )
     ));
 
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, true));
+    new JoystickButton(leftJoystick, 4).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium),
+      new ArmMove(m_arm, Constants.Setpoints.armAngleMedium)
+    ));
+
+    new JoystickButton(rightJoystick, 2).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
+        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
+      ),
+      new ArmMove(m_arm, Constants.Setpoints.armAngleHorizontal),
+      new ParallelCommandGroup(
+        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
+      ),
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
+    ));
+
+    new JoystickButton(rightJoystick, 3).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
+        new ArmMove(m_arm, Constants.Setpoints.armAngleMiddleHigh)
+      ),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new ArmMove(m_arm, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
+    new JoystickButton(otherJoystick, 5).whileTrue(new DriveToAprilTag(m_robotDrive, true));
+    new JoystickButton(otherJoystick, 6).whileTrue(new DriveToAprilTag(m_robotDrive, false));
 
     // ARM
     new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, Constants.Setpoints.armAngleVerticalDown));
@@ -157,7 +189,7 @@ public class RobotContainer {
     new JoystickButton(otherJoystick, 1).whileFalse(new ClimbDirectMove(m_climb, 140));
 
     // INTAKE
-    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector));
+    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
     
     // MANUAL CLIMB
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));

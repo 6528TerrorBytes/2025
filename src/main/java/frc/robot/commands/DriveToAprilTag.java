@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
+// import com.pathplanner.lib.FollowPathCommand; // This is the path command thing
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -69,6 +70,8 @@ public class DriveToAprilTag extends Command {
     if (leftSide) {
       offsetHoriz *= -1; // Flip to other side of the AprilTag
     }
+
+    offsetHoriz += Constants.AprilTags.xTagOffset;
 
     // Add offsets to find the position of the robot on the field next to the AprilTag
     Translation2d finalGoalPos = new Translation2d(
@@ -147,12 +150,18 @@ public class DriveToAprilTag extends Command {
   @Override
   public void end(boolean interrupted) {
     if (m_foundTag) {
-      m_path.end(interrupted);
+      m_path.end(false);
+      System.out.println("Path ended.");
     }
   }
 
   @Override
   public boolean isFinished() {
-    return m_foundTag && m_path.isFinished();
+    if (m_foundTag && m_path.isFinished()) {
+      System.out.println("Path ended is finished");
+      return true;
+    }
+
+    return false;
   }
 }

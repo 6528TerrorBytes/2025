@@ -8,6 +8,7 @@ package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +56,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
 
     PathfindingCommand.warmupCommand().schedule(); // load to be quicker on first run
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   /**

@@ -21,6 +21,7 @@ public final class Constants {
   public static final class Setpoints {
     // Elevator setpoints
     public static final double elevatorZero = 0.1;
+    public static final double elevatorScoreMiddle = 1.325;
     public static final double elevatorMedium = 2.15;
     public static final double elevatorGrabSecond = 4.5;
     public static final double elevatorHigh = 6.2;
@@ -33,7 +34,8 @@ public final class Constants {
     
     // Arm setpoint angles
     public static final double armAngleVerticalDown = armAngleHorizontal - 90;
-    public static final double armAngleMedium = armAngleVerticalDown + 37;
+    public static final double armAngleMedium = armAngleVerticalDown + 40;
+    public static final double armAngleMiddleHigh = armAngleHorizontal + 55;
     public static final double armAngleHigh = armAngleHorizontal + 80;
     public static final double armAngleHoldAlgae = armAngleHorizontal - 25;
 
@@ -41,7 +43,11 @@ public final class Constants {
 
     // Algae fork setpoint angles
     public static final double algaeForkHorizontal = 119;
-    public static final double algaeForkZero = algaeForkHorizontal - 90;
+    public static final double algaeForkZero = algaeForkHorizontal - 95;
+
+    // Intake motor stop delays
+    public static final double m_intakeMotorStopDelayPickup = 0.1;
+    public static final double m_intakeMotorStopDelayDunk = 0.5;
   }
 
   public static final class AprilTags {
@@ -49,8 +55,9 @@ public final class Constants {
     public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
 
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
-    public static final Translation2d coralOffset = new Translation2d(0.2, 0.5);
+    public static final Translation2d coralOffset = new Translation2d(0.147, 0.52); // 0.148
     public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
+    public static final double xTagOffset = -0.04;
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
 
@@ -103,7 +110,7 @@ public final class Constants {
     
     // intake arm
     public static final SparkMaxConfig armConfig = new SparkMaxConfig();
-    public static final double armTolerance = 5; // Might need to be greater to account for error
+    public static final double armTolerance = 8; // Might need to be greater to account for error
 
     static {
       armConfig

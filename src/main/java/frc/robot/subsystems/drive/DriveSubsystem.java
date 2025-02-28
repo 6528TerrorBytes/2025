@@ -165,6 +165,9 @@ public class DriveSubsystem extends SubsystemBase {
     );
 
     Pose2d currentPos = getPose();
+    
+    // Update SmartDashboard field position
+    m_field.setRobotPose(currentPos);
 
     // Add vision measurement to odometry calculation if an AprilTag is visible
     // Example: https://www.chiefdelphi.com/t/introducing-megatag2-by-limelight-vision/461243
@@ -176,6 +179,8 @@ public class DriveSubsystem extends SubsystemBase {
       Utility.setRobotOrientation("limelight-two", getAngleBlueSide());
 
       PoseEstimate poseEstimate = Utility.getRobotFieldPose("limelight-two");
+
+      if (poseEstimate == null) return;
 
       // Decrease the first and second numbers to trust limelight data more
       // TUNING STD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
@@ -190,16 +195,12 @@ public class DriveSubsystem extends SubsystemBase {
         Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), true, tagID);
 
         // Add to robot's current field position
-        Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + currentPos.getX(), apriltagpose.getY() + currentPos.getY(),
-                                               Rotation2d.fromDegrees(apriltagpose.getRotation().getDegrees() + currentPos.getRotation().getDegrees()));
+        Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + currentPos.getX(), apriltagpose.getY() + currentPos.getY(), apriltagpose.getRotation());
 
         m_field2.setRobotPose(apriltagPlusBotPos);
         SmartDashboard.putData("AprilTagPos", m_field2);
       }
     }
-    
-    // Update SmartDashboard field position
-    m_field.setRobotPose(currentPos);
   }
 
   public void updateSmartDashboard() {
