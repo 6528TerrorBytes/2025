@@ -30,21 +30,25 @@ public class ArmMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_hasMoved = false;
+    m_hasMoved = true;
+    m_arm.enable();
+    m_arm.setGoal(m_setPoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_hasMoved) {
-      // if arm is being set to vertical down, then don't set it until the elevator is all the way down
-      if (m_setPoint < Constants.Setpoints.armElevatorMoveAngle &&
-          m_elevator.getPos() > Constants.Setpoints.elevatorZero + Constants.MotorConfig.elevatorTolerance)
-        return;
+    // if (!m_hasMoved) {
+    //   // if arm is being set to vertical down, then don't set it until the elevator is all the way down
+    //   if (m_setPoint < Constants.Setpoints.armElevatorMoveAngle &&
+    //       m_elevator.getPos() > Constants.Setpoints.elevatorZero + Constants.MotorConfig.elevatorTolerance)
+    //     return;
+
+    //   System.out.println("setting arm angle");
       
-      m_arm.enable();
-      m_arm.setGoal(m_setPoint);
-    }
+    //   m_arm.enable();
+    //   m_arm.setGoal(m_setPoint);
+    // }
   }
 
   // Called once the command ends or is interrupted.

@@ -11,9 +11,9 @@ public class TailArm extends WPIArm {
   public TailArm() {
     super(
       Constants.MotorIDs.tailArmID, Constants.MotorConfig.tailArmConfig, Constants.MotorConfig.tailArmTolerance,
-      1000, 1000,
-      0, 0, 0,
-      0, 0.01, 0
+      200, 200,
+      0.1, 0, 0,
+      0, 0.35, 0
     );
   }
 

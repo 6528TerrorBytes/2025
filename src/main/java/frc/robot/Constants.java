@@ -21,8 +21,9 @@ public final class Constants {
   public static final class Setpoints {
     // Elevator setpoints
     public static final double elevatorZero = 0.1;
+    public static final double elevatorScoreLow = 0.5;
     public static final double elevatorScoreMiddle = 1.325;
-    public static final double elevatorMedium = 2.15;
+    public static final double elevatorIntake = 2.5;
     public static final double elevatorGrabSecond = 4.5;
     public static final double elevatorHigh = 6.2;
 
@@ -33,8 +34,9 @@ public final class Constants {
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
     
     // Arm setpoint angles
-    public static final double armAngleVerticalDown = armAngleHorizontal - 90;
-    public static final double armAngleMedium = armAngleVerticalDown + 40;
+    public static final double armAngleVerticalDown = armAngleHorizontal - 95;
+    public static final double armAngleLowScore = armAngleHorizontal + 30;
+    public static final double armAngleIntake = armAngleVerticalDown + 42;
     public static final double armAngleMiddleHigh = armAngleHorizontal + 55;
     public static final double armAngleHigh = armAngleHorizontal + 80;
     public static final double armAngleHoldAlgae = armAngleHorizontal - 25;
@@ -46,9 +48,10 @@ public final class Constants {
     public static final double algaeForkZero = algaeForkHorizontal - 95;
 
     // Tail arm setpoint angles
-    public static final double tailArmHorizontal = 0;
-    public static final double tailArmVertical = tailArmHorizontal + 90;
-    public static final double tailArmStartingAngle = tailArmHorizontal + 110;
+    public static final double tailArmHorizontal = 70;
+    public static final double tailArmScore = tailArmHorizontal + 60;
+    public static final double tailArmStartingAngle = tailArmHorizontal + 105;
+    public static final double tailArmDown = tailArmHorizontal - 35;
 
     // Intake motor stop delays
     public static final double m_intakeMotorStopDelayPickup = 0.1;
@@ -59,9 +62,19 @@ public final class Constants {
     public static final double[] coralBlueTags = { 17, 18, 19, 20, 21, 22 };
     public static final double[] coralRedTags =  { 6, 7, 8, 9, 10, 11 };
 
+    public static final double[] stationBlueTags = { 12, 13 };
+    public static final double[] stationRedTags =  { 1, 2 };
+
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
-    public static final Translation2d coralOffset = new Translation2d(0.147, 0.52); // 0.148
-    public static final PathConstraints constraints = new PathConstraints(0.2, 0.2, 0.2, 0.2);
+    public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.56); // 0.148
+    public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.56);
+    
+    public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
+    public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
+
+    public static final Translation2d coralCollectOffset = new Translation2d(0.06, 0.545);
+
+    public static final PathConstraints constraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
     public static final double xTagOffset = -0.04;
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
@@ -82,6 +95,12 @@ public final class Constants {
       aprilTagFaceAngles.put(Double.valueOf(8), Double.valueOf(-120));
       aprilTagFaceAngles.put(Double.valueOf(7), Double.valueOf(180));
       aprilTagFaceAngles.put(Double.valueOf(6), Double.valueOf(120));
+
+      // coral intake apriltags
+      aprilTagFaceAngles.put(Double.valueOf(13), Double.valueOf(125));
+      aprilTagFaceAngles.put(Double.valueOf(12), Double.valueOf(-125));
+      aprilTagFaceAngles.put(Double.valueOf(2), Double.valueOf(55));
+      aprilTagFaceAngles.put(Double.valueOf(1), Double.valueOf(-55));
     }
   }
 
@@ -163,7 +182,7 @@ public final class Constants {
       tailArmConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(30)
-        .inverted(false);
+        .inverted(true);
       tailArmConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60)

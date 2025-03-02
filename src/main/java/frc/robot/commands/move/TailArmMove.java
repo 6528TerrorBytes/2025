@@ -4,6 +4,7 @@
 
 package frc.robot.commands.move;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.WPIPID.TailArm;
 
@@ -27,9 +28,17 @@ public class TailArmMove extends Command {
     m_tailArm.setGoal(m_setpoint);
   }
 
+  @Override
+  public void end(boolean interrupted) {
+    // m_tailArm.disable();
+  }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_tailArm.atGoal();
+    // return m_tailArm.atGoal();
+    SmartDashboard.putNumber("tail arm angle", m_tailArm.getPos());
+
+    return false;
   }
 }

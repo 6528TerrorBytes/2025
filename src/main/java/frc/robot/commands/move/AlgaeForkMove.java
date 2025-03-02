@@ -38,12 +38,8 @@ public class AlgaeForkMove extends Command {
     if (!m_hasMoved && m_elevator.getPos() > Constants.Setpoints.elevatorAlgaeFlapMovePos) {
       m_hasMoved = true;
 
-      System.out.println("algae flap enabled");
-
       m_algaeFork.enable();
       m_algaeFork.setGoal(m_setpoint);
-    } else {
-      System.out.println(m_hasMoved + " | " + m_elevator.getPos() + " | " + Constants.Setpoints.elevatorAlgaeFlapMovePos);
     }
   }
 

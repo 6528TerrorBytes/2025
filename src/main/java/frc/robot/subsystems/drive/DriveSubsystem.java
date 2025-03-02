@@ -29,6 +29,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.PIDConstants;
 
 import frc.utils.SwerveUtils;
+import frc.robot.Constants;
 import frc.robot.Utility;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -65,6 +66,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The gyro sensor
   private final AHRS m_navX = new AHRS(NavXComType.kMXP_SPI); // (May need to change this: NavXUpdateRate.k200Hz)
+  private double m_rotationOffset; // for starting the navX at a different angle than it really is
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -86,19 +88,14 @@ public class DriveSubsystem extends SubsystemBase {
   SwerveDrivePoseEstimator m_odometry = new SwerveDrivePoseEstimator(
     DriveConstants.kDriveKinematics,
     Rotation2d.fromDegrees(getAngleBlueSide()),
-    new SwerveModulePosition[] {
-      m_frontLeft.getPosition(),
-      m_frontRight.getPosition(),
-      m_rearLeft.getPosition(),
-      m_rearRight.getPosition()
-    },
+    getModulePositions(),
     new Pose2d(),
 
     // TUNING THESE STANDARD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
     // Making these too low will result in jittery pose estimation (see Smartdashboard for pose estimation location),
     // Whereas too high will result in the pose not adjusting for vision data quick enough. Adjust these as needed
     VecBuilder.fill(0.1, 0.1, 0.1), // x, y, rotation for encoder pos (I think)
-    VecBuilder.fill(0.2, 0.2, 0.25) // x, y, rotation for vision data
+    VecBuilder.fill(0.1, 0.1, 0.1) // x, y, rotation for vision data
   );
 
   /** Creates a new DriveSubsystem. */
@@ -108,6 +105,8 @@ public class DriveSubsystem extends SubsystemBase {
     //   // Do whatever you want with the pose here
     //   m_field.getObject("target pose").setPose(pose);
     // });
+
+    m_rotationOffset = 0;
     
     // Auton setup for PathPlanner, see https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 
@@ -136,6 +135,18 @@ public class DriveSubsystem extends SubsystemBase {
       Utility::teamColorIsRed,
       this
     );
+    
+    SmartDashboard.putData("field", m_field);
+    SmartDashboard.putData("tagfield", m_field2);
+  }
+
+  public SwerveModulePosition[] getModulePositions() {
+    return new SwerveModulePosition[] {
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
+    };
   }
 
   // Get rotation in degrees
@@ -145,7 +156,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)
   public double getAngleBlueSide() {
-    return getRawAngle() + (Utility.teamColorIsRed() ? 180 : 0);
+    return getRawAngle() + m_rotationOffset;
+  }
+
+  public double getOdometryRotation() {
+    return getPose().getRotation().getDegrees() + (Utility.teamColorIsRed() ? 180 : 0);
   }
 
   @Override
@@ -156,55 +171,54 @@ public class DriveSubsystem extends SubsystemBase {
     m_odometry.updateWithTime(
       Utility.getMatchTime(),
       Rotation2d.fromDegrees(getAngleBlueSide()),
-      new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
-      }
+      getModulePositions()
     );
 
-    Pose2d currentPos = getPose();
+    // System.out.println("rawblue: " + getAngleBlueSide() + " | odometry: " + getOdometryRotation() + " | offset: " + m_rotationOffset);
+
+    // Use Limelights to adjust odometry to find more accurate field position
+    incorporateVisionPose("limelight-two");
+    incorporateVisionPose("limelight-four");
     
     // Update SmartDashboard field position
-    m_field.setRobotPose(currentPos);
+    m_field.setRobotPose(getPose());
+  }
+
+  public void incorporateVisionPose(String limelightName) {
+    Utility.setRobotOrientation(limelightName, getOdometryRotation());
 
     // Add vision measurement to odometry calculation if an AprilTag is visible
     // Example: https://www.chiefdelphi.com/t/introducing-megatag2-by-limelight-vision/461243
     // Documetation: https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
     //               https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization-megatag2#using-wpilibs-pose-estimator
-    if (Utility.aprilTagInView("limelight-two")) {
-      // MAY NEED TO CHANGE BASED ON COLOR (Because the function says the angle must be 0 degrees = facing red wall)
-      // Fixed? Perchance.
-      Utility.setRobotOrientation("limelight-two", getAngleBlueSide());
+    if (Utility.aprilTagInView(limelightName)) {
+      System.out.println("Incorporating " + limelightName);
 
-      PoseEstimate poseEstimate = Utility.getRobotFieldPose("limelight-two");
-
+      PoseEstimate poseEstimate = Utility.getRobotFieldPose(limelightName);
       if (poseEstimate == null) return;
 
       // Decrease the first and second numbers to trust limelight data more
       // TUNING STD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
       // Making these too low will result in jittery pose estimation, too high results in not adjusting for vision data too quickly. Adjust as needed
-      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(0.2, 0.2,9999999));
+      m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(0.1, 0.1,9999999));
       m_odometry.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
 
 
       // show the apriltag calculated position
-      double tagID = DriveToAprilTag.coralTagInView();
+      double tagID = DriveToAprilTag.coralTagInView("limelight-two");
       if (tagID >= 0) {
-        Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), true, tagID);
+        Pose2d apriltagpose = DriveToAprilTag.calculateGoalPos(getPose(), Constants.AprilTags.coralOffsetLeft, "limelight-two", tagID);
 
         // Add to robot's current field position
-        Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + currentPos.getX(), apriltagpose.getY() + currentPos.getY(), apriltagpose.getRotation());
+        Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + getPose().getX(), apriltagpose.getY() + getPose().getY(), apriltagpose.getRotation());
 
         m_field2.setRobotPose(apriltagPlusBotPos);
-        SmartDashboard.putData("AprilTagPos", m_field2);
       }
     }
   }
 
   public void updateSmartDashboard() {
-    SmartDashboard.putData("Drive Subsystem Field", m_field);
+
   }
 
   /**
@@ -230,14 +244,15 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
+    m_rotationOffset = pose.getRotation().getDegrees() - getRawAngle();
+
+    if (m_rotationOffset < 8) m_rotationOffset = 0;
+
+    // System.out.println("RESET: " + m_rotationOffset + " | " + pose.getRotation().getDegrees() + " | " + getRawAngle());
+
     m_odometry.resetPosition(
       Rotation2d.fromDegrees(getAngleBlueSide()),
-      new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
-      },
+      getModulePositions(),
       pose
     );
   }
@@ -322,7 +337,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getRawAngle())) // Replace with angleBlue?
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getOdometryRotation()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     
     setModuleStates(swerveModuleStates);
@@ -376,11 +391,19 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  public void resetGyro() {
+  public void resetGyro() { // this function no longer works.....
     m_navX.reset();
     
-    // TEST if necessary - https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html#resetting-the-robot-pose
-    resetOdometry(getPose());
+    // https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html#resetting-the-robot-pose
+    // resetOdometry(getPose());
+
+    Pose2d pose = getPose();
+
+    m_odometry.resetPosition(
+      Rotation2d.fromDegrees(getAngleBlueSide()),
+      getModulePositions(),
+      new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(Utility.teamColorIsRed() ? 180 : 0))
+    );
   }
 
   /**

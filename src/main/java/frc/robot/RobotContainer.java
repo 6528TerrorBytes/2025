@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
@@ -16,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -32,9 +29,11 @@ import frc.robot.commands.move.ElevatorMove;
 import frc.robot.commands.move.IntakeMove;
 import frc.robot.commands.move.MotorMoveTesting;
 import frc.robot.commands.move.TailArmMove;
+import frc.robot.commands.move.TailIntakeMove;
 import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.CoralDetector;
 import frc.robot.subsystems.IntakeMotor;
+import frc.robot.subsystems.TailIntake;
 import frc.robot.subsystems.WPIPID.IntakeArm;
 import frc.robot.subsystems.WPIPID.TailArm;
 import frc.robot.subsystems.drive.DriveSubsystem;
@@ -60,6 +59,7 @@ public class RobotContainer {
   private final AlgaeFork m_algaeFork = new AlgaeFork();
   private final IntakeMotor m_intakeMotor = new IntakeMotor();
   private final TailArm m_tailArm = new TailArm();
+  private final TailIntake m_tailIntake = new TailIntake();
 
   private final CoralDetector m_coralDetector = new CoralDetector();
 
@@ -72,11 +72,11 @@ public class RobotContainer {
   public RobotContainer() {
     configureSharedCommands();
 
-    registerPathplannerCommands();
-    setupPathplannerSelector();
-
     setDriveCommand();
     configureControllerBindings();
+    
+    registerPathplannerCommands();
+    setupPathplannerSelector();
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
   }
@@ -130,7 +130,7 @@ public class RobotContainer {
     // ELEVATOR
     new JoystickButton(leftJoystick, 14).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond));
     new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh));
-    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium));
+    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake));
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
     
     // Zero elevator
@@ -175,8 +175,8 @@ public class RobotContainer {
 
     // Coral intake arm + elevator position
     new JoystickButton(leftJoystick, 4).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorMedium),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMedium)
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
     ));
 
     // Dunk the coral L4
@@ -195,13 +195,31 @@ public class RobotContainer {
       )
     ));
 
+    // Score L2
+    new JoystickButton(rightJoystick, 4).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleLowScore)
+      )
+      // new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      // new ParallelCommandGroup(
+      //   new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+      //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      // )
+    ));
+
     // Drive to score coral, left and right sides
-    new JoystickButton(otherJoystick, 5).whileTrue(new DriveToAprilTag(m_robotDrive, true));
-    new JoystickButton(otherJoystick, 6).whileTrue(new DriveToAprilTag(m_robotDrive, false));
+    new JoystickButton(otherJoystick, 5).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, "limelight-two", false));
+    new JoystickButton(otherJoystick, 6).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, "limelight-two", false));
+    
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, "limelight-two", false));
+    // new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, "limelight-two", false));
+
+    new JoystickButton(rightJoystick, 14).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, "limelight-four", true));
 
     // ARM
     new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleVerticalDown));
-    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMedium));
+    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake));
     new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
     new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal));
     new JoystickButton(leftJoystick, 9).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae));
@@ -213,7 +231,13 @@ public class RobotContainer {
 
     // TAIL ARM
     new JoystickButton(rightJoystick, 10).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmHorizontal));
+    new JoystickButton(rightJoystick, 9).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmScore));
     new JoystickButton(rightJoystick, 8).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
+
+
+    // Tail Intake
+    new JoystickAnalogButton(otherJoystick, 3, 0.5).whileTrue(new TailIntakeMove(m_tailIntake, 1));
+    new JoystickAnalogButton(otherJoystick, 4, 0.5).whileTrue(new TailIntakeMove(m_tailIntake, -1));
 
 
     // CLIMB SETPOINT
@@ -221,7 +245,10 @@ public class RobotContainer {
     // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 145));
 
     // CLIMB DIRECT MOVE
-    new JoystickButton(otherJoystick, 1).whileFalse(new ClimbDirectMove(m_climb, 140));
+    new JoystickButton(otherJoystick, 1).whileFalse(new ParallelCommandGroup(
+      new ClimbDirectMove(m_climb, true, 135),
+      new ClimbDirectMove(m_climb, false, 160)
+    ));
 
     // INTAKE
     new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
@@ -236,8 +263,8 @@ public class RobotContainer {
 
   private void registerPathplannerCommands() {
     // Register commands used in Pathplanner autos
-    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTag(m_robotDrive, true));
-    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTag(m_robotDrive, false));
+    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, "limelight-two", false));
 
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
 
@@ -249,9 +276,13 @@ public class RobotContainer {
     
     // List all the autos from Pathplanner here:
     m_pathPlannerChooser.addOption("Pos testing", "Pos testing auto");
+    m_pathPlannerChooser.addOption("Pos testing 2", "Pos testing 2");
+    m_pathPlannerChooser.addOption("Pos testing 3", "Pos testing 3");
     m_pathPlannerChooser.addOption("Center Score", "Center Score");
 
-    SmartDashboard.putData("Select Pathplanner Auton", m_pathPlannerChooser);
+    SmartDashboard.putData("Select Auto", m_pathPlannerChooser);
+
+    System.out.println("select auto placed");
   }
 
   public Command getAutonomousCommand() {
@@ -274,6 +305,6 @@ public class RobotContainer {
     SmartDashboard.putNumber("Arm Encoder", m_arm.m_encoder.getPosition());
     // SmartDashboard.putNumber("Algae Forks", m_algaeFork.m_encoder.getPosition());
     SmartDashboard.putNumber("Gyro", m_robotDrive.getRawAngle());
-    m_climb.updateSmartDashboard();
+    // m_climb.updateSmartDashboard();
   }
 }

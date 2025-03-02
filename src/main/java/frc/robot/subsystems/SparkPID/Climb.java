@@ -22,31 +22,11 @@ public class Climb extends SubsystemBase {
     m_innerMotor.setTolerance(10);
   }
 
-  public void setGoal(double angle) {
-    m_outerMotor.setGoal(angle); // test one at a time
-    m_innerMotor.setGoal(angle);
+  public SparkMove getOuterMotor() {
+    return m_outerMotor;
   }
-
-  public boolean atGoal() {
-    return m_outerMotor.atGoal() && m_innerMotor.atGoal();
-  }
-
-  public void disable() {
-    m_outerMotor.disable();
-    m_innerMotor.disable();
-  }
-
-  public void setPower(double power) {
-    m_outerMotor.setPower(power);
-    m_innerMotor.setPower(power);
-  }
-
-  public double getPos() {
-    return m_outerMotor.getPos();
-  }
-
-  public void updateSmartDashboard() {
-    SmartDashboard.putNumber("OuterClimb", m_outerMotor.getPos());
-    SmartDashboard.putNumber("InnerClimb", m_innerMotor.getPos());
+  
+  public SparkMove getInnerMotor() {
+    return m_innerMotor;
   }
 }
