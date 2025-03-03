@@ -164,8 +164,9 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    m_path.end(false);
+
     if (m_foundTag) {
-      m_path.end(false);
       System.out.println("End path");
     }
     System.out.println("Path ended.");
