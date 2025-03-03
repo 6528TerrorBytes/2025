@@ -68,14 +68,13 @@ public final class Constants {
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
     public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.56); // 0.148
     public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.56);
-    
     public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
     public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
+    public static final double coralXTagOffset = -0.04;
 
-    public static final Translation2d coralCollectOffset = new Translation2d(0.06, 0.545);
+    public static final Translation2d coralCollectOffset = new Translation2d(0.02, 0.545);
 
-    public static final PathConstraints constraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
-    public static final double xTagOffset = -0.04;
+    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
 
