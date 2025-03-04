@@ -11,8 +11,8 @@ public class JoystickAnalogButton extends Trigger {
    * @param joystick The GenericHID object that has the button (e.g. Joystick, KinectStick, etc)
    * @param buttonNumber The button number (see {@link GenericHID#getRawButton(int) }
    */
-  public JoystickAnalogButton(GenericHID joystick, int axisNumber, double threshold) {
-    super(() -> joystick.getRawAxis(axisNumber) > threshold);
+  public JoystickAnalogButton(GenericHID joystick, int axisNumber, double lowerThreshold, double upperThreshold) {
+    super(() -> (joystick.getRawAxis(axisNumber) > lowerThreshold && joystick.getRawAxis(axisNumber) < upperThreshold));
     requireNonNullParam(joystick, "joystick", "JoystickButton");
   }
 }

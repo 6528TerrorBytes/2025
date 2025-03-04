@@ -24,7 +24,8 @@ public final class Constants {
     public static final double elevatorScoreLow = 0.5;
     public static final double elevatorScoreMiddle = 1.325;
     public static final double elevatorIntake = 2.315;
-    public static final double elevatorGrabSecond = 4.5;
+    public static final double elevatorGrabLow = 2.5;
+    public static final double elevatorGrabHigh = 4.5;
     public static final double elevatorHigh = 6.2;
 
     public static final double elevatorAlgaeFlapMovePos = 1;

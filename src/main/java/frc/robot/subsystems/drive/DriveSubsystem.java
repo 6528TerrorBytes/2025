@@ -152,7 +152,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Get rotation in degrees
   public double getRawAngle() {
-    return -m_navX.getAngle();
+    return -m_navX.getAngle() * 1.0307507301151; // Scale factor found by rotating the bot 10 times and seeing how much the gyro is off of.
   }
 
   // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)
@@ -394,6 +394,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void resetGyro() { // this function no longer works.....
     m_navX.reset();
+    m_rotationOffset = (Utility.teamColorIsRed() ? 180 : 0);
     
     // https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html#resetting-the-robot-pose
     // resetOdometry(getPose());

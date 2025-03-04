@@ -130,7 +130,7 @@ public class RobotContainer {
     // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
     // ELEVATOR
-    new JoystickButton(leftJoystick, 14).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond));
+    new JoystickButton(leftJoystick, 14).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh));
     new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh));
     new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake));
     new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
@@ -141,7 +141,7 @@ public class RobotContainer {
     // MANUAL ELEVATOR
     new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.4));
     new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.15));
-    new JoystickAnalogButton(leftJoystick, 3, 0.5).whileTrue(new ElevatorMove(m_elevator, m_arm, m_elevator.getPos()));
+    new JoystickAnalogButton(leftJoystick, 3, 0.5, 1).whileTrue(new ElevatorMove(m_elevator, m_arm, m_elevator.getPos()));
 
     // High shooting mockup automation
     // new SequentialCommandGroup(
@@ -160,7 +160,7 @@ public class RobotContainer {
 
     // Algae 2nd level grab start position
     new JoystickButton(leftJoystick, 2).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond),
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
     ));
@@ -171,7 +171,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
       )
     ));
 
@@ -239,8 +239,8 @@ public class RobotContainer {
 
 
     // Tail Intake
-    new JoystickAnalogButton(otherJoystick, 3, 0.5).whileTrue(new TailIntakeMove(m_tailIntake, 1));
-    new JoystickAnalogButton(otherJoystick, 4, 0.5).whileTrue(new TailIntakeMove(m_tailIntake, -1));
+    new JoystickAnalogButton(otherJoystick, 3, 0.5, 1).whileTrue(new TailIntakeMove(m_tailIntake, 1));
+    new JoystickAnalogButton(otherJoystick, 4, 0.5, 1).whileTrue(new TailIntakeMove(m_tailIntake, -1));
 
 
     // CLIMB SETPOINT
@@ -285,7 +285,7 @@ public class RobotContainer {
     // ---- SECONDARY SCORING ----
 
     // Score L4 right trigger
-    new JoystickAnalogButton(otherJoystick, 3, 0.3).whileTrue(c_dunkScore);
+    new JoystickAnalogButton(otherJoystick, 3, 0.3, 1).whileTrue(c_dunkScore);
   
     // Score L3 right bumper
     new JoystickButton(otherJoystick, 6).whileTrue(new SequentialCommandGroup(
@@ -313,8 +313,8 @@ public class RobotContainer {
       )
     ));
 
-    // Intake position
-    new POVButton(otherJoystick, 90).whileTrue(new ParallelCommandGroup(
+    // Intake position left trigger
+    new JoystickAnalogButton(otherJoystick, 2, 0.3, 1).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
     ));
@@ -322,8 +322,8 @@ public class RobotContainer {
 
     // ---- SECONDARY OTHER ----
 
-    // INTAKE PICKUP button X
-    new JoystickButton(otherJoystick, 3).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
+    // INTAKE PICKUP left bumper
+    new JoystickButton(otherJoystick, 5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
 
 
     // ---- SECONDARY ALGAE ----
@@ -333,25 +333,43 @@ public class RobotContainer {
     // ARM HIGH button B
     new JoystickButton(otherJoystick, 2).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
 
-    // PICKUP ALGAE left trigger
-    new JoystickAnalogButton(otherJoystick, 2, 0.3).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond),
+    // PICKUP ALGAE HIGH left joystick down (hold)
+    new JoystickAnalogButton(otherJoystick, 1, 0.3, 1).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
     ));
 
-    // BRING UP ALGAE left bumper
-    new JoystickButton(otherJoystick, 5).whileTrue(new ParallelCommandGroup(
+    // BRING UP ALGAE HIGH left joystick up (hold)
+    new JoystickAnalogButton(otherJoystick, 1, -1, -0.3).whileTrue(new ParallelCommandGroup(
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabSecond + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
       )
     ));
 
-    // RESET ALGAE FLAP share button
-    new JoystickButton(otherJoystick, 7).whileTrue(new SequentialCommandGroup(
+    // PICKUP ALGAE LOW right joystick down (hold)
+    new JoystickAnalogButton(otherJoystick, 5, 0.3, 1).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
+      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
+    ));
+
+    // BRING UP ALGAE LOW right joystick up (hold)
+    new JoystickAnalogButton(otherJoystick, 5, -1, -0.3).whileTrue(new ParallelCommandGroup(
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
+
+      new SequentialCommandGroup(
+        new WaitCommand(0.35),
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + 0.8)
+      )
+    ));
+
+
+    // RESET ALGAE FLAP button X
+    new JoystickButton(otherJoystick, 3).whileTrue(new SequentialCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorAlgaeFlapMovePos + 2 * Constants.MotorConfig.elevatorTolerance),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero),
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
