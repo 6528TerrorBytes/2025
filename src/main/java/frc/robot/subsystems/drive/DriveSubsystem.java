@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // Gyro NAVX:
 import com.studica.frc.AHRS; // EXAMPLE NAVX CODE: https://pdocs.kauailabs.com/navx-mxp/examples/rotate-to-angle-2/ and https://www.chiefdelphi.com/t/navx-vendordeps/478142/3
 import com.studica.frc.AHRS.NavXComType;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator.Gettable;
 import com.pathplanner.lib.auto.AutoBuilder; // Pathplanner: https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -94,8 +95,8 @@ public class DriveSubsystem extends SubsystemBase {
     // TUNING THESE STANDARD DEVIATIONS: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-pose-estimators.html#tuning-pose-estimators
     // Making these too low will result in jittery pose estimation (see Smartdashboard for pose estimation location),
     // Whereas too high will result in the pose not adjusting for vision data quick enough. Adjust these as needed
-    VecBuilder.fill(0.1, 0.1, 0.1), // x, y, rotation for encoder pos (I think)
-    VecBuilder.fill(0.1, 0.1, 0.1) // x, y, rotation for vision data
+    VecBuilder.fill(0.1, 0.1, 99999999), // x, y, rotation for encoder pos (I think)
+    VecBuilder.fill(0.1, 0.1, 99999999) // x, y, rotation for vision data
   );
 
   /** Creates a new DriveSubsystem. */
@@ -177,8 +178,8 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("rawblue: " + getAngleBlueSide() + " | odometry: " + getOdometryRotation() + " | offset: " + m_rotationOffset);
 
     // Use Limelights to adjust odometry to find more accurate field position
-    incorporateVisionPose("limelight-two");
-    incorporateVisionPose("limelight-four");
+    // incorporateVisionPose("limelight-two");
+    // incorporateVisionPose("limelight-four");
     
     // Update SmartDashboard field position
     m_field.setRobotPose(getPose());
@@ -402,7 +403,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_odometry.resetPosition(
       Rotation2d.fromDegrees(getAngleBlueSide()),
       getModulePositions(),
-      new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(Utility.teamColorIsRed() ? 180 : 0))
+      new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(getAngleBlueSide()))
     );
   }
 

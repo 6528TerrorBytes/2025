@@ -32,7 +32,7 @@ public class DriveToAprilTag extends Command {
   private boolean m_foundTag;
   private Command m_path;
 
-  public DriveToAprilTag(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset String limelightName, boolean isPickupStation) {
+  public DriveToAprilTag(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation) {
     m_driveSubsystem = driveSubsystem;
     m_posOffset = posOffset;
     m_xOffset = xOffset;
@@ -110,15 +110,18 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public void initialize() {
+    m_path = null;
     m_foundTag = false;
   }
 
   @Override
   public void execute() {
     if (!m_foundTag) {
-      System.out.println("not found");
       double aprilTagID = (m_isPickupStation ? stationTagInView(m_limelightName) : coralTagInView(m_limelightName));
-      if (aprilTagID < 0) return; // exit if no apriltag found
+      if (aprilTagID < 0) {
+        System.out.println("not found");
+        return; // exit if no apriltag found
+      }
 
       System.out.println("found");
 
@@ -156,17 +159,21 @@ public class DriveToAprilTag extends Command {
       // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
       // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
 
-      m_path.initialize();
-      // m_path.schedule();
+      // m_path.initialize();
+      m_path.schedule();
     } else {
       // Basically just wrapping m_path in this external command now lol
-      m_path.execute();
+      // m_path.execute();
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_path.end(false);
+    try {
+      if (m_path != null) m_path.end(false);
+    } catch (java.lang.NullPointerException e) {
+      System.out.println("path ended as null");
+    }
 
     if (m_foundTag) {
       System.out.println("End path");
@@ -176,9 +183,13 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public boolean isFinished() {
-    if (m_foundTag && m_path.isFinished()) {
-      System.out.println("Path ended is finished");
-      return true;
+    try {
+      if (m_foundTag && m_path != null && m_path.isFinished()) {
+        System.out.println("Path ended is finished");
+        return true;
+      }
+    } catch (java.lang.NullPointerException e) {
+      System.out.println("path not set up (isFinished)");
     }
 
     return false;

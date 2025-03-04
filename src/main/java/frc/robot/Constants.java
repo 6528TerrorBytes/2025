@@ -23,11 +23,11 @@ public final class Constants {
     public static final double elevatorZero = 0.1;
     public static final double elevatorScoreLow = 0.5;
     public static final double elevatorScoreMiddle = 1.325;
-    public static final double elevatorIntake = 2.5;
+    public static final double elevatorIntake = 2.315;
     public static final double elevatorGrabSecond = 4.5;
     public static final double elevatorHigh = 6.2;
 
-    public static final double elevatorAlgaeFlapMovePos = 1.5;
+    public static final double elevatorAlgaeFlapMovePos = 1;
 
     // Arm config angles    
     public static final double armAngleAtRest = 42; // angle it sits at with no power
@@ -70,9 +70,12 @@ public final class Constants {
     public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.56);
     public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
     public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
+    
+    public static final Translation2d coralOffsetCentered = new Translation2d(0, 0.56);
+
     public static final double coralXTagOffset = -0.04;
 
-    public static final Translation2d coralCollectOffset = new Translation2d(0.02, 0.545);
+    public static final Translation2d coralCollectOffset = new Translation2d(0.035, 0.545);
 
     public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
 
