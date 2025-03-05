@@ -153,7 +153,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Get rotation in degrees
   public double getRawAngle() {
-    return -m_navX.getAngle() * 1.0307507301151; // Scale factor found by rotating the bot 10 times and seeing how much the gyro is off of.
+    return -m_navX.getAngle() * 1.0213908190223; // Scale factor found by rotating the bot 10 times and seeing how much the gyro is off of.
   }
 
   // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)

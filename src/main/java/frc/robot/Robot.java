@@ -11,6 +11,12 @@ import org.littletonrobotics.junction.LoggedRobot;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.BlinkinCommand;
@@ -58,6 +64,12 @@ public class Robot extends LoggedRobot {
 
     PathfindingCommand.warmupCommand().schedule(); // load to be quicker on first run
     FollowPathCommand.warmupCommand().schedule();
+
+    // Limelights for dashboard
+    // HttpCamera ll2 = new HttpCamera("limelight-two", "10.65.28.11:5800", HttpCameraKind.kMJPGStreamer);
+    // HttpCamera ll4 = new HttpCamera("limelight-four", "10.65.28.12:5800", HttpCameraKind.kMJPGStreamer);
+    // CameraServer.startAutomaticCapture(ll2);
+    // CameraServer.startAutomaticCapture(ll4);
   }
 
   /**

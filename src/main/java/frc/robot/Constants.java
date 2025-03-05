@@ -23,7 +23,7 @@ public final class Constants {
     public static final double elevatorZero = 0.1;
     public static final double elevatorScoreLow = 0.5;
     public static final double elevatorScoreMiddle = 1.325;
-    public static final double elevatorIntake = 2.318;
+    public static final double elevatorIntake = 2.338;
     public static final double elevatorGrabLow = 1.9;
     public static final double elevatorGrabHigh = 4.5;
     public static final double elevatorHigh = 6.2;
@@ -36,7 +36,9 @@ public final class Constants {
     
     // Arm setpoint angles
     public static final double armAngleVerticalDown = armAngleHorizontal - 95;
-    public static final double armAngleLowScore = armAngleHorizontal + 30;
+    public static final double armAngleL2 = armAngleHorizontal + 30;
+    public static final double armAngleL1Stage1 = armAngleHorizontal - 30;
+    public static final double armAngleL1Stage2 = armAngleHorizontal;
     public static final double armAngleIntake = armAngleVerticalDown + 42;
     public static final double armAngleMiddleHigh = armAngleHorizontal + 55;
     public static final double armAngleHigh = armAngleHorizontal + 80;
@@ -72,11 +74,11 @@ public final class Constants {
     public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
     public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
     
-    public static final Translation2d coralOffsetCentered = new Translation2d(0, 0.56);
+    public static final Translation2d coralOffsetCentered = new Translation2d(-0.04, 0.46);
 
     public static final double coralXTagOffset = -0.04;
 
-    public static final Translation2d coralCollectOffset = new Translation2d(0.015, 0.545); // 0.035
+    public static final Translation2d coralCollectOffset = new Translation2d(0, 0.515); // 0.035
 
     public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
 
@@ -294,6 +296,8 @@ public final class Constants {
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
     // robot that drives faster).
     public static final int kDrivingMotorPinionTeeth = 15;
+    // Module free speed is 6.77
+    // Gear reduction 4.0
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.

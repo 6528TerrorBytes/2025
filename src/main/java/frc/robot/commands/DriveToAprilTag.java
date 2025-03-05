@@ -64,8 +64,8 @@ public class DriveToAprilTag extends Command {
   // MATHS DESMOS: https://www.desmos.com/calculator/uagr4pd9gv
   public static Pose2d findGoalPos(Pose2d robotPos, Pose2d aprilTagPos, Translation2d posOffset, double xOffset, double aprilTagId) {
     double robotRot = robotPos.getRotation().getRadians();
-    // double faceTagAngle1 = robotRot - aprilTagPos.getRotation().getRadians(); // robotRot - tagRot, finds angle to face the AprilTag
-    double faceTagAngle = Math.toRadians(Constants.AprilTags.aprilTagFaceAngles.get(aprilTagId)); // RADIANS NOT DEGREES >:(
+    double faceTagAngle = robotRot - aprilTagPos.getRotation().getRadians(); // robotRot - tagRot, finds angle to face the AprilTag
+    // double faceTagAngle = Math.toRadians(Constants.AprilTags.aprilTagFaceAngles.get(aprilTagId)); // RADIANS NOT DEGREES >:( direct gyro reading might not be accurate
     
     // Calculate the AprilTag's position on the field
     Translation2d tagFieldPos = new Translation2d(
@@ -171,15 +171,14 @@ public class DriveToAprilTag extends Command {
   @Override
   public void end(boolean interrupted) {
     try {
-      if (m_path != null) {
-        m_path.cancel();
-        m_path.end(false);
-      }
+      m_path.end(false);
+      m_path.cancel();
+      System.out.println("ended command not null");
     } catch (java.lang.NullPointerException e) {
-
+      System.out.println("ended null");
     }
     
-      // DriveSubsystem.m_controllersDisabled = false;
+    // DriveSubsystem.m_controllersDisabled = false;
   }
 
   @Override
