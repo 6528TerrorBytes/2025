@@ -23,7 +23,7 @@ public class IntakeMotor extends SubsystemBase {
   }
 
   public void onBackwards() {
-    m_motor.set(0.5);
+    m_motor.set(1);
   }
 
   public void disable() {

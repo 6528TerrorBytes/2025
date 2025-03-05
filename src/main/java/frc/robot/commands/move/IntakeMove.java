@@ -18,11 +18,14 @@ public class IntakeMove extends Command {
   private double m_stopDelay; // seconds delay between the beam state changing and the intake motor stopping
   private double m_stopTime;
 
-  public IntakeMove(IntakeMotor intakeMotor, CoralDetector coralDetector, double stopDelay) {
+  private boolean m_reverse;
+
+  public IntakeMove(IntakeMotor intakeMotor, CoralDetector coralDetector, double stopDelay, boolean reverse) {
     m_intakeMotor = intakeMotor;
     m_coralDetector = coralDetector;
     m_stopDelay = stopDelay;
     m_stopTime = 0;
+    m_reverse = reverse;
 
     addRequirements(m_intakeMotor);
   }
@@ -31,7 +34,12 @@ public class IntakeMove extends Command {
   public void initialize() {
     m_stopTime = 0;
     m_startDetected = m_coralDetector.detected();
-    m_intakeMotor.onForward(); // drives intake motor
+
+    if (m_reverse) {
+      m_intakeMotor.onBackwards();
+    } else {
+      m_intakeMotor.onForward(); // drives intake motor
+    }
   }
 
   @Override

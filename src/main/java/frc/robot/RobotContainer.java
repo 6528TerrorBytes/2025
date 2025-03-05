@@ -110,7 +110,7 @@ public class RobotContainer {
       ),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal),
       new ParallelCommandGroup(
-        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
       ),
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
@@ -192,7 +192,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -205,7 +205,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleLowScore)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -256,7 +256,7 @@ public class RobotContainer {
     ));
 
     // INTAKE
-    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
+    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
     
     // MANUAL CLIMB
     // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
@@ -295,7 +295,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -308,7 +308,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleLowScore)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -321,7 +321,7 @@ public class RobotContainer {
         // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -338,7 +338,7 @@ public class RobotContainer {
     // ---- SECONDARY OTHER ----
 
     // INTAKE PICKUP left bumper
-    new JoystickButton(otherJoystick, 5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
+    new JoystickButton(otherJoystick, 5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
 
     // ---- SECONDARY ALGAE ----
@@ -448,7 +448,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -461,7 +461,7 @@ public class RobotContainer {
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleLowScore)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
       new ParallelCommandGroup(
         new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -474,7 +474,7 @@ public class RobotContainer {
         // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
       ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true),
       new ParallelCommandGroup(
         // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -486,14 +486,14 @@ public class RobotContainer {
     // ---- PICKUP ALGAE, ALL RIGHT TRIGGER (3)
 
     // HOME ALGAE HIGH button Y 
-    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 4).whileTrue(new ParallelCommandGroup(
+    new JoystickMultiAnalogButton(otherJoystick, 3, 0.3, 4).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
     ));
 
     // PICKUP ALGAE HIGH button X
-    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 3).whileTrue(new ParallelCommandGroup(
+    new JoystickMultiAnalogButton(otherJoystick, 3, 0.3, 3).whileTrue(new ParallelCommandGroup(
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
 
       new SequentialCommandGroup(
@@ -503,14 +503,14 @@ public class RobotContainer {
     ));
 
     // HOME ALGAE LOW button B
-    new JoystickMultiAnalogButton(leftJoystick, 2, 0.3, 2).whileTrue(new ParallelCommandGroup(
+    new JoystickMultiAnalogButton(otherJoystick, 3, 0.3, 2).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
     ));
 
     // PICKUP ALGAE LOW button A
-    new JoystickMultiAnalogButton(leftJoystick, 2, 0.3, 1).whileTrue(new ParallelCommandGroup(
+    new JoystickMultiAnalogButton(otherJoystick, 3, 0.3, 1).whileTrue(new ParallelCommandGroup(
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
 
       new SequentialCommandGroup(
@@ -535,7 +535,7 @@ public class RobotContainer {
     ));
 
     // INTAKE RUN button B
-    new JoystickMultiButton(otherJoystick, 5, 2).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
+    new JoystickMultiButton(otherJoystick, 5, 2).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
 
 
