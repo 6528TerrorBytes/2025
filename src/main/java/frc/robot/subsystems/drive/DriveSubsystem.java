@@ -79,6 +79,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
   public static double speedMultiplier = 1;
+  public static boolean m_controllersDisabled = false;
 
   // Field object for Shuffleboard
   private final Field2d m_field = new Field2d();
@@ -133,8 +134,8 @@ public class DriveSubsystem extends SubsystemBase {
         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
       ),
       config,
-      Utility::teamColorIsRed,
-      this
+      Utility::teamColorIsRed//,
+      // this
     );
     
     SmartDashboard.putData("field", m_field);
@@ -276,6 +277,12 @@ public class DriveSubsystem extends SubsystemBase {
       xSpeed *= speedMultiplier;
       ySpeed *= speedMultiplier;
       rot *= speedMultiplier;
+    }
+
+    if (m_controllersDisabled) {
+      xSpeed = 0;
+      ySpeed = 0;
+      rot = 0;
     }
     
     double xSpeedCommanded;

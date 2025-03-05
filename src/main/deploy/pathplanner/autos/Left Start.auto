@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center StartMove"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
+            "pathName": "Left StartMove"
           }
         },
         {
@@ -23,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "tagPositionLeft"
+                  "name": "armHigh"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "armHigh"
+                  "name": "tagPositionLeft"
                 }
               }
             ]
@@ -39,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "dunkScoreL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftLeftHP"
           }
         }
       ]

@@ -39,6 +39,8 @@ import frc.robot.subsystems.WPIPID.IntakeArm;
 import frc.robot.subsystems.WPIPID.TailArm;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.utils.JoystickAnalogButton;
+import frc.utils.JoystickMultiAnalogButton;
+import frc.utils.JoystickMultiButton;
 import frc.robot.subsystems.WPIPID.AlgaeFork;
 import frc.robot.subsystems.WPIPID.Elevator;
 import frc.robot.subsystems.SparkPID.Climb;
@@ -264,7 +266,7 @@ public class RobotContainer {
     // new JoystickButton(otherJoystick, 8).whileTrue(new MotorMoveTesting(climbouter, -0.35));
   }
 
-  private void configureOFFICIALBindings() {
+  private void configureOLDOFFICIALBindings() {
     // ---- DRIVER BINDINGS ----
     
     // Drive to score coral, left and right sides, L3 or L4
@@ -313,6 +315,19 @@ public class RobotContainer {
       )
     ));
 
+    // Score L1 button A
+    new JoystickButton(otherJoystick, 4).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
+      ),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new ParallelCommandGroup(
+        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
     // Intake position left trigger
     new JoystickAnalogButton(otherJoystick, 2, 0.3, 1).whileTrue(new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
@@ -328,8 +343,8 @@ public class RobotContainer {
 
     // ---- SECONDARY ALGAE ----
 
-    // ELEVATOR DOWN button A
-    new JoystickButton(otherJoystick, 1).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
+    // ELEVATOR DOWN button X
+    new JoystickButton(otherJoystick, 3).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
     // ARM HIGH button B
     new JoystickButton(otherJoystick, 2).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
 
@@ -368,8 +383,8 @@ public class RobotContainer {
     ));
 
 
-    // RESET ALGAE FLAP button X
-    new JoystickButton(otherJoystick, 3).whileTrue(new SequentialCommandGroup(
+    // RESET ALGAE FLAP back button
+    new JoystickButton(otherJoystick, 7).whileTrue(new SequentialCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorAlgaeFlapMovePos + 2 * Constants.MotorConfig.elevatorTolerance),
       new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero),
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
@@ -394,6 +409,167 @@ public class RobotContainer {
 
     // TAIL ARM SCORE INTAKE -- options button
     new JoystickButton(otherJoystick, 8).whileTrue(new TailIntakeMove(m_tailIntake, 1));
+
+
+    // ---- CLIMB ----
+    new JoystickButton(otherJoystick, 10).whileFalse(new ParallelCommandGroup(
+      new ClimbDirectMove(m_climb, true, 135),
+      new ClimbDirectMove(m_climb, false, 160)
+    ));
+  }
+
+  private void configureOFFICIALBindings() {
+    // ---- DRIVER BINDINGS ----
+    
+    // Drive to score coral, left and right sides, L3 or L4
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    
+    // Drive to score L2
+    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    
+    // Drive to score L1, centered
+    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    
+    // Drive to intake and pickup
+    new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+
+
+    
+    // ---- SCORE CORAL, ALL LEFT TRIGGER (2) ----
+
+    // Score L4 button Y
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 4).whileTrue(c_dunkScore);
+  
+    // Score L3 button X
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 3).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
+      ),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
+    // Score L2 button B
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 2).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleLowScore)
+      ),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
+    // Score L1 button A
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 1).whileTrue(new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
+      ),
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk),
+      new ParallelCommandGroup(
+        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
+
+
+    // ---- PICKUP ALGAE, ALL RIGHT TRIGGER (3)
+
+    // HOME ALGAE HIGH button Y 
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 4).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
+      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
+    ));
+
+    // PICKUP ALGAE HIGH button X
+    new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 3).whileTrue(new ParallelCommandGroup(
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
+
+      new SequentialCommandGroup(
+        new WaitCommand(0.35),
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
+      )
+    ));
+
+    // HOME ALGAE LOW button B
+    new JoystickMultiAnalogButton(leftJoystick, 2, 0.3, 2).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
+      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
+    ));
+
+    // PICKUP ALGAE LOW button A
+    new JoystickMultiAnalogButton(leftJoystick, 2, 0.3, 1).whileTrue(new ParallelCommandGroup(
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
+
+      new SequentialCommandGroup(
+        new WaitCommand(0.35),
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + 0.8)
+      )
+    ));
+
+
+
+    // ---- MISC CONTROLS, LEFT BUMPER (5) ----
+
+    // ELEVATOR DOWN button A
+    new JoystickMultiButton(otherJoystick, 5, 1).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
+    // ARM HIGH button Y
+    new JoystickMultiButton(otherJoystick, 5, 4).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));    
+    
+    // INTAKE POSITION button X
+    new JoystickMultiButton(otherJoystick, 5, 3).whileTrue(new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
+    ));
+
+    // INTAKE RUN button B
+    new JoystickMultiButton(otherJoystick, 5, 2).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup));
+
+
+
+    // ---- STINGRAY, RIGHT BUMPER (6) ----
+
+    // TAIL ARM INTAKE button A
+    new JoystickMultiButton(otherJoystick, 6, 1).whileTrue(new ParallelCommandGroup(
+      new TailArmMove(m_tailArm, Constants.Setpoints.tailArmDown),
+      new TailIntakeMove(m_tailIntake, -1))
+    );
+
+    // TAIL ARM SCORE POS button Y
+    new JoystickMultiButton(otherJoystick, 6, 4).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmScore));
+
+    // TAIL ARM SCORE OUTAKE button B
+    new JoystickMultiButton(otherJoystick, 6, 2).whileTrue(new TailIntakeMove(m_tailIntake, 1));
+
+    // CLIMB button START
+    new JoystickMultiButton(otherJoystick, 6, 8).whileFalse(new ParallelCommandGroup(
+      new ClimbDirectMove(m_climb, true, 135),
+      new ClimbDirectMove(m_climb, false, 160)
+    ));
+
+
+
+    // ---- OTHER ----
+
+    // RESET ALGAE FLAP back button
+    new JoystickButton(otherJoystick, 7).whileTrue(new SequentialCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorAlgaeFlapMovePos + 2 * Constants.MotorConfig.elevatorTolerance),
+      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero),
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
+    ));
+
   }
 
   private void registerPathplannerCommands() {

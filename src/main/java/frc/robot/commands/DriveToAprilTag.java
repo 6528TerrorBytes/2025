@@ -161,6 +161,7 @@ public class DriveToAprilTag extends Command {
 
       // m_path.initialize();
       m_path.schedule();
+      // DriveSubsystem.m_controllersDisabled = true;
     } else {
       // Basically just wrapping m_path in this external command now lol
       // m_path.execute();
@@ -170,22 +171,21 @@ public class DriveToAprilTag extends Command {
   @Override
   public void end(boolean interrupted) {
     try {
-      if (m_path != null) m_path.end(false);
+      if (m_path != null) {
+        m_path.cancel();
+        m_path.end(false);
+      }
     } catch (java.lang.NullPointerException e) {
-      System.out.println("path ended as null");
-    }
 
-    if (m_foundTag) {
-      System.out.println("End path");
     }
-    System.out.println("Path ended.");
+    
+      // DriveSubsystem.m_controllersDisabled = false;
   }
 
   @Override
   public boolean isFinished() {
     try {
       if (m_foundTag && m_path != null && m_path.isFinished()) {
-        System.out.println("Path ended is finished");
         return true;
       }
     } catch (java.lang.NullPointerException e) {

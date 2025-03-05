@@ -50,7 +50,7 @@ public final class Constants {
 
     // Tail arm setpoint angles
     public static final double tailArmHorizontal = 70;
-    public static final double tailArmScore = tailArmHorizontal + 60;
+    public static final double tailArmScore = tailArmHorizontal + 40;
     public static final double tailArmStartingAngle = tailArmHorizontal + 105;
     public static final double tailArmDown = tailArmHorizontal - 35;
 
