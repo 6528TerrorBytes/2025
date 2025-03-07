@@ -83,6 +83,9 @@ public class RobotContainer {
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
     m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
+
+    // Defaults
+    new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleVerticalDown);
   }
 
   public void setDriveCommand() {
@@ -581,11 +584,24 @@ public class RobotContainer {
 
   private void registerPathplannerCommands() {
     // Register commands used in Pathplanner autos
+
+    // Auto moves
     NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    
+    NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
+
+    // Arm/elevator/intake motors
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
+    NamedCommands.registerCommand("elevatorZero", new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
+    NamedCommands.registerCommand("armIntakeSetup", new ParallelCommandGroup( // moves elevator and arm to intake position
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
+    ));
+    NamedCommands.registerCommand("runIntakeMotor", new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
+    // Scoring
     NamedCommands.registerCommand("dunkScoreL4", c_dunkScore);
   }
 
@@ -593,10 +609,11 @@ public class RobotContainer {
     // sets up the Smartdashboard dropdown selector to pick which autonomous to run
     
     // List all the autos from Pathplanner here:
-    m_pathPlannerChooser.addOption("Pos testing", "Pos testing auto");
-    m_pathPlannerChooser.addOption("Pos testing 2", "Pos testing 2");
-    m_pathPlannerChooser.addOption("Pos testing 3", "Pos testing 3");
-    m_pathPlannerChooser.addOption("Center Score", "Center Score");
+    m_pathPlannerChooser.addOption("None", null);
+    m_pathPlannerChooser.addOption("Just Move", "Just Move");
+    m_pathPlannerChooser.addOption("Center Score 1", "Center Score 1");
+    m_pathPlannerChooser.addOption("Right Score 2", "Right Score 2");
+    m_pathPlannerChooser.addOption("Left Score 2", "Left Score 2");
 
     SmartDashboard.putData("Select Auto", m_pathPlannerChooser);
 
@@ -607,7 +624,7 @@ public class RobotContainer {
     String selectedAuto = m_pathPlannerChooser.getSelected();
 
     if (selectedAuto == null) {
-      return null;
+      return new InstantCommand(() -> {});
     }
 
     PathPlannerAuto auto = new PathPlannerAuto(selectedAuto);
