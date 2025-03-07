@@ -14,6 +14,9 @@ public class IntakeArm extends WPIArm {
       0.035, 0, 0, // PID
       0, 0.6, 0 // S, G, V (Arm Feedforward)
     );
+
+    enable();
+    setGoal(Constants.Setpoints.armAngleVerticalDown);
   }
 
   @Override

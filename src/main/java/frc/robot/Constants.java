@@ -74,7 +74,7 @@ public final class Constants {
     public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
     public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
     
-    public static final Translation2d coralOffsetCentered = new Translation2d(-0.04, 0.46);
+    public static final Translation2d coralOffsetCentered = new Translation2d(-0.06, 0.46);
 
     public static final double coralXTagOffset = -0.04;
 

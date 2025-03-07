@@ -15,6 +15,9 @@ public class TailArm extends WPIArm {
       0.1, 0, 0,
       0, 0.35, 0
     );
+    
+    enable();
+    setGoal(Constants.Setpoints.tailArmStartingAngle);
   }
 
   @Override

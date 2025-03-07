@@ -83,9 +83,6 @@ public class RobotContainer {
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
     m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
-
-    // Defaults
-    new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleVerticalDown);
   }
 
   public void setDriveCommand() {
