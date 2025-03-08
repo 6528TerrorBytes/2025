@@ -13,10 +13,13 @@ public class ClimbDirectMove extends Command {
   private final double m_angle;
 
   private SparkMove m_motor;
+  private boolean m_inner;
 
   /** Creates a new ClimbManualMove. */
   public ClimbDirectMove(Climb climb, boolean isInnerMotor, double angle) {
     m_angle = angle;
+
+    m_inner = isInnerMotor;
 
     if (isInnerMotor) {
       m_motor = climb.getInnerMotor();
@@ -37,11 +40,13 @@ public class ClimbDirectMove extends Command {
   @Override
   public void end(boolean interrupted) {
     m_motor.disable();
+    System.out.println("ended " + m_inner);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    System.out.println(m_motor.getPos() + " " + m_inner);
     return m_motor.getPos() > m_angle;
   }
 }

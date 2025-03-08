@@ -19,11 +19,11 @@ public class IntakeMotor extends SubsystemBase {
   }
   
   public void onForward() {
-    m_motor.set(-1);
+    m_motor.set(1);
   }
 
   public void onBackwards() {
-    m_motor.set(1);
+    m_motor.set(-1);
   }
 
   public void disable() {

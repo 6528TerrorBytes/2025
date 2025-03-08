@@ -37,7 +37,7 @@ public class TailArmMove extends Command {
   @Override
   public boolean isFinished() {
     // return m_tailArm.atGoal();
-    SmartDashboard.putNumber("tail arm angle", m_tailArm.getPos());
+    // SmartDashboard.putNumber("tail arm angle", m_tailArm.getPos());
 
     return false;
   }

@@ -35,7 +35,7 @@ public final class Constants {
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
     
     // Arm setpoint angles
-    public static final double armAngleVerticalDown = armAngleHorizontal - 95;
+    public static final double armAngleVerticalDown = armAngleHorizontal - 100;
     public static final double armAngleL2 = armAngleHorizontal + 30;
     public static final double armAngleL1Stage1 = armAngleHorizontal - 30;
     public static final double armAngleL1Stage2 = armAngleHorizontal;
@@ -57,8 +57,8 @@ public final class Constants {
     public static final double tailArmDown = tailArmHorizontal - 35;
 
     // Intake motor stop delays
-    public static final double m_intakeMotorStopDelayPickup = 0.1;
-    public static final double m_intakeMotorStopDelayDunk = 0.5;
+    public static final double m_intakeMotorStopDelayPickup = 0;
+    public static final double m_intakeMotorStopDelayDunk = 0.2;
   }
 
   public static final class AprilTags {

@@ -22,15 +22,15 @@ import frc.robot.Utility;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 public class DriveToAprilTag extends Command {
-  private final DriveSubsystem m_driveSubsystem;
-  private final Translation2d m_posOffset; // Left or right side of the coral to go to
-  private final String m_limelightName;
+  protected final DriveSubsystem m_driveSubsystem;
+  protected final Translation2d m_posOffset; // Left or right side of the coral to go to
+  protected final String m_limelightName;
   
-  private boolean m_isPickupStation;
-  private double m_xOffset;
+  protected boolean m_isPickupStation;
+  protected double m_xOffset;
 
-  private boolean m_foundTag;
-  private Command m_path;
+  protected boolean m_foundTag;
+  // private Command m_path;
 
   public DriveToAprilTag(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation) {
     m_driveSubsystem = driveSubsystem;
@@ -110,7 +110,8 @@ public class DriveToAprilTag extends Command {
 
   @Override
   public void initialize() {
-    m_path = null;
+    System.out.println("initializing again");
+    // m_path = null;
     m_foundTag = false;
   }
 
@@ -138,7 +139,12 @@ public class DriveToAprilTag extends Command {
       // Create path from current robot position to the new position
 
       // Angle pointing towards goal from the starting position:
-      double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      double angle;
+      if ((goalPos.getX() - robotPos.getX()) == 0) {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / 0.0001);
+      } else {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      }
 
       // ROTATIONS ARE PATH OF TRAVEL
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
@@ -154,43 +160,61 @@ public class DriveToAprilTag extends Command {
       );
 
       path.preventFlipping = true;
-      m_path = AutoBuilder.followPath(path);
+      // m_path = AutoBuilder.followPath(path);
       
       // New based on https://pathplanner.dev/pplib-pathfinding.html#pathfind-to-pose
       // m_path = AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.constraints);
 
       // m_path.initialize();
-      m_path.schedule();
+      // m_path.schedule(); 
+
+      AutoBuilder.followPath(path).schedule();
+      
       // DriveSubsystem.m_controllersDisabled = true;
-    } else {
+    } /*else {
       // Basically just wrapping m_path in this external command now lol
       // m_path.execute();
-    }
+    }*/
   }
 
-  @Override
-  public void end(boolean interrupted) {
-    try {
-      m_path.end(false);
-      m_path.cancel();
-      System.out.println("ended command not null");
-    } catch (java.lang.NullPointerException e) {
-      System.out.println("ended null");
-    }
+  // @Override
+  // public void end(boolean interrupted) {
+  //   System.out.println("ended start1");
+  //   // try {
+  //   //   System.out.println("ended start inner");
+  //   //   m_path.end(false);
+  //   //   m_path.cancel();
+  //   //   System.out.println("ended command not null");
+  //   // } catch (java.lang.NullPointerException e) {
+  //   //   System.out.println("ended null");
+  //   // }
+
+  //   // System.out.println("ended path function successful");
     
-    // DriveSubsystem.m_controllersDisabled = false;
-  }
+  //   // DriveSubsystem.m_controllersDisabled = false;
+  // }
 
-  @Override
-  public boolean isFinished() {
-    try {
-      if (m_foundTag && m_path != null && m_path.isFinished()) {
-        return true;
-      }
-    } catch (java.lang.NullPointerException e) {
-      System.out.println("path not set up (isFinished)");
-    }
+  // @Override
+  // public boolean isFinished() {
+  //   if (!m_doIsFinished) return false;
 
-    return false;
-  }
+  //   // try {
+  //   //   System.out.println("isFinished start");
+  //   //   if (m_foundTag && m_path != null && m_path.isFinished()) {
+  //   //     System.out.println("isFinished ended successful1");
+  //   //     return true;
+  //   //   }
+  //   //   System.out.println("isFinished ended successful2");
+  //   // } catch (java.lang.NullPointerException e) {
+  //   //   System.out.println("path not set up (isFinished)");
+  //   //   return false;
+  //   // }
+    
+  //   System.out.println("IsFinished done");
+
+  //   System.out.println("g - x: " + m_goal.getX() + " | y: " + m_goal.getY() + " | rot: " + m_goal.getRotation().getDegrees());
+  //   System.out.println("s - x: " + m_start.getX() + " | y: " + m_start.getY() + " | rot: " + m_start.getRotation().getDegrees());
+
+  //   return false;
+  // }
 }

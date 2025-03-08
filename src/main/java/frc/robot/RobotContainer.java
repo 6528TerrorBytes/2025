@@ -23,6 +23,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.BlinkinCommand;
 import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
+import frc.robot.commands.DriveToAprilTagAuto;
 import frc.robot.commands.move.AlgaeForkMove;
 import frc.robot.commands.move.ArmMove;
 import frc.robot.commands.move.ClimbDirectMove;
@@ -420,20 +421,22 @@ public class RobotContainer {
 
   private void configureOFFICIALBindings() {
     // ---- DRIVER BINDINGS ----
+
+    // we drunk driving bois
     
     // Drive to score coral, left and right sides, L3 or L4
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
     // Drive to score L2
-    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
     // Drive to score L1, centered
-    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
     // Drive to intake and pickup
-    new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+    new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
     // REZERO the bot right button thingy
     new JoystickButton(rightJoystick, 4).whileTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
@@ -562,7 +565,7 @@ public class RobotContainer {
 
     // CLIMB button START
     new JoystickMultiButton(otherJoystick, 6, 8).whileFalse(new ParallelCommandGroup(
-      new ClimbDirectMove(m_climb, true, 135),
+      new ClimbDirectMove(m_climb, true, 180),
       new ClimbDirectMove(m_climb, false, 160)
     ));
 
@@ -583,10 +586,10 @@ public class RobotContainer {
     // Register commands used in Pathplanner autos
 
     // Auto moves
-    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
-    NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+    NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
 
     // Arm/elevator/intake motors

@@ -138,8 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
       // this
     );
     
-    SmartDashboard.putData("field", m_field);
-    SmartDashboard.putData("tagfield", m_field2);
+    // SmartDashboard.putData("field", m_field);
+    // SmartDashboard.putData("tagfield", m_field2);
   }
 
   public SwerveModulePosition[] getModulePositions() {
@@ -183,7 +183,7 @@ public class DriveSubsystem extends SubsystemBase {
     // incorporateVisionPose("limelight-four");
     
     // Update SmartDashboard field position
-    m_field.setRobotPose(getPose());
+    // m_field.setRobotPose(getPose());
   }
 
   public void incorporateVisionPose(String limelightName) {
@@ -214,7 +214,7 @@ public class DriveSubsystem extends SubsystemBase {
         // Add to robot's current field position
         Pose2d apriltagPlusBotPos = new Pose2d(apriltagpose.getX() + getPose().getX(), apriltagpose.getY() + getPose().getY(), apriltagpose.getRotation());
 
-        m_field2.setRobotPose(apriltagPlusBotPos);
+        // m_field2.setRobotPose(apriltagPlusBotPos);
       }
     }
   }
@@ -228,7 +228,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Does not make the bot follow the trajectory.
    */
   public void setFieldTrajectory(Trajectory trajectory) {
-    m_field.getObject("traj").setTrajectory(trajectory);
+    //  .getObject("traj").setTrajectory(trajectory);
   }
 
   /**
@@ -270,7 +270,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit, boolean multSpeed) {
-    SmartDashboard.putNumber("Gyro angle", getRawAngle());
+    // SmartDashboard.putNumber("Gyro angle", getRawAngle());
 
     if (multSpeed) {
       // Speed multiplier
