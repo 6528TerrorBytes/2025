@@ -4,10 +4,19 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -72,6 +81,8 @@ public class RobotContainer {
 
   // Shared commands -- used in both joysticks and autons
   private Command c_dunkScore;
+
+  private Command m_path; // for testing
   
   public RobotContainer() {
     configureSharedCommands();
@@ -83,7 +94,7 @@ public class RobotContainer {
     setupPathplannerSelector();
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
-    m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
+    // m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
   }
 
   public void setDriveCommand() {
@@ -444,6 +455,78 @@ public class RobotContainer {
     // Reverse intake
     new JoystickButton(leftJoystick, 3).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true));
 
+    // attempt at fixing the bug
+    new JoystickButton(leftJoystick, 11).debounce(1).onTrue(new InstantCommand(() -> {
+      double aprilTagID = DriveToAprilTag.coralTagInView("limelight-two");
+
+      if (aprilTagID < 0) {
+        System.out.println("not found 1");
+        return; // exit if no apriltag found
+      }
+
+      System.out.println("found 1");
+
+      Pose2d robotPos = m_robotDrive.getPose();
+      Pose2d goalPos = DriveToAprilTag.calculateGoalPos(robotPos, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", aprilTagID);
+      goalPos = new Pose2d(goalPos.getX() + robotPos.getX(), goalPos.getY() + robotPos.getY(), goalPos.getRotation());
+
+      double angle;
+      if ((goalPos.getX() - robotPos.getX()) == 0) {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / 0.0001);
+      } else {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      }
+
+      // ROTATIONS ARE PATH OF TRAVEL
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
+        goalPos
+      );
+
+      PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        Constants.AprilTags.aprilTagDriveConstraints, // really slow for testing purposes
+        null, // May need to add a starting state for velocity & angle of the bot at the start of the pose
+        new GoalEndState(0, goalPos.getRotation())
+      );
+      path.preventFlipping = true;
+      AutoBuilder.followPath(path).schedule();
+    }));
+    
+
+    // test if same start and finish crashes pathplanner
+    new JoystickButton(leftJoystick, 12).debounce(1).onTrue(new InstantCommand(() -> {
+      Pose2d pose = m_robotDrive.getPose();
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(pose, pose);
+
+      PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        Constants.AprilTags.aprilTagDriveConstraints, // really slow for testing purposes
+        null, // May need to add a starting state for velocity & angle of the bot at the start of the pose
+        new GoalEndState(0, Rotation2d.fromRadians(0))
+      );
+      path.preventFlipping = true;
+
+      AutoBuilder.followPath(path).schedule();
+    }));
+
+    // test pathplanner pathfind to pose
+    new JoystickButton(leftJoystick, 13).debounce(1).onTrue(new InstantCommand(() -> {
+      double aprilTagID = DriveToAprilTag.coralTagInView("limelight-two");
+
+      if (aprilTagID < 0) {
+        System.out.println("not found 3");
+        return; // exit if no apriltag found
+      }
+
+      System.out.println("found 3");
+
+      Pose2d robotPos = m_robotDrive.getPose();
+      Pose2d goalPos = DriveToAprilTag.calculateGoalPos(robotPos, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", aprilTagID);
+      goalPos = new Pose2d(goalPos.getX() + robotPos.getX(), goalPos.getY() + robotPos.getY(), goalPos.getRotation());
+
+      AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.aprilTagDriveConstraints, 0).schedule();
+    }));
     
     // ---- SCORE CORAL, ALL LEFT TRIGGER (2) ----
 
@@ -563,8 +646,8 @@ public class RobotContainer {
     // TAIL ARM SCORE OUTAKE button B
     new JoystickMultiButton(otherJoystick, 6, 2).whileTrue(new TailIntakeMove(m_tailIntake, 1));
 
-    // CLIMB button START
-    new JoystickMultiButton(otherJoystick, 6, 8).whileFalse(new ParallelCommandGroup(
+    // CLIMB button, put on the driver joysticks!
+    new JoystickButton(leftJoystick, 6).whileFalse(new ParallelCommandGroup(
       new ClimbDirectMove(m_climb, true, 180),
       new ClimbDirectMove(m_climb, false, 160)
     ));

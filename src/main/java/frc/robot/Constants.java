@@ -80,7 +80,7 @@ public final class Constants {
 
     public static final Translation2d coralCollectOffset = new Translation2d(0, 0.515); // 0.035
 
-    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(0.4, 0.4, 0.4, 0.4);
+    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
 

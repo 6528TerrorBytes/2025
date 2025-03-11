@@ -157,10 +157,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // The angle that is stored in the robot's odometry (because that has to always be relative to the blue side)
+  // Stored odometry needs to be relative to blue side, where 0 degrees faces the red wall no matter alliance color
+  // This is for vision incorporation, and also for Pathplanner (where 0, 0 is bottom left blue corner)
   public double getAngleBlueSide() {
     return getRawAngle() + m_rotationOffset;
   }
 
+  // This angle used for movement can be be flipped based on team color, however
   public double getOdometryRotation() {
     return getPose().getRotation().getDegrees() + (Utility.teamColorIsRed() ? 180 : 0);
   }
@@ -179,6 +182,7 @@ public class DriveSubsystem extends SubsystemBase {
     // System.out.println("rawblue: " + getAngleBlueSide() + " | odometry: " + getOdometryRotation() + " | offset: " + m_rotationOffset);
 
     // Use Limelights to adjust odometry to find more accurate field position
+    // UNCOMMENT FOR INCORPORATING VISION POSITION TO ODOMETRY
     // incorporateVisionPose("limelight-two");
     // incorporateVisionPose("limelight-four");
     
@@ -187,7 +191,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void incorporateVisionPose(String limelightName) {
-    Utility.setRobotOrientation(limelightName, getOdometryRotation());
+    Utility.setRobotOrientation(limelightName, getAngleBlueSide());
 
     // Add vision measurement to odometry calculation if an AprilTag is visible
     // Example: https://www.chiefdelphi.com/t/introducing-megatag2-by-limelight-vision/461243
