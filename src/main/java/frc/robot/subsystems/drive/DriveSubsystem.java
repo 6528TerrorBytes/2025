@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // Gyro NAVX:
 import com.studica.frc.AHRS; // EXAMPLE NAVX CODE: https://pdocs.kauailabs.com/navx-mxp/examples/rotate-to-angle-2/ and https://www.chiefdelphi.com/t/navx-vendordeps/478142/3
 import com.studica.frc.AHRS.NavXComType;
-import com.fasterxml.jackson.databind.deser.ValueInstantiator.Gettable;
 import com.pathplanner.lib.auto.AutoBuilder; // Pathplanner: https://pathplanner.dev/pplib-getting-started.html#install-pathplannerlib
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -82,8 +81,8 @@ public class DriveSubsystem extends SubsystemBase {
   public static boolean m_controllersDisabled = false;
 
   // Field object for Shuffleboard
-  private final Field2d m_field = new Field2d();
-  private final Field2d m_field2 = new Field2d();
+  // private final Field2d m_field = new Field2d();
+  // private final Field2d m_field2 = new Field2d();
 
   // Odometry class for tracking robot pose
   // https://first.wpi.edu/wpilib/allwpilib/docs/beta/java/edu/wpi/first/math/estimator/SwerveDrivePoseEstimator.html
@@ -183,8 +182,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Use Limelights to adjust odometry to find more accurate field position
     // UNCOMMENT FOR INCORPORATING VISION POSITION TO ODOMETRY
-    // incorporateVisionPose("limelight-two");
-    // incorporateVisionPose("limelight-four");
+    incorporateVisionPose("limelight-two");
+    incorporateVisionPose("limelight-four");
     
     // Update SmartDashboard field position
     // m_field.setRobotPose(getPose());
@@ -198,8 +197,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Documetation: https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-swerve-pose-estimation
     //               https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization-megatag2#using-wpilibs-pose-estimator
     if (Utility.aprilTagInView(limelightName)) {
-      System.out.println("Incorporating " + limelightName);
-
       PoseEstimate poseEstimate = Utility.getRobotFieldPose(limelightName);
       if (poseEstimate == null) return;
 

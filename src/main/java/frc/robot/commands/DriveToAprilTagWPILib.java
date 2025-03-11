@@ -6,17 +6,11 @@ package frc.robot.commands;
 
 import java.util.List;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 
 // Overrides isFinished and end, has a bug where the robot will sometimes randomly die upon finishing the path in teleop (???)
@@ -60,12 +54,17 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
       // Angle pointing towards goal from the starting position:
       double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
 
+      System.out.println("wpilib trajectory generating...");
       Trajectory traj = WPILibPath.genTrajectory(List.of(
         new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
+        // robotPos, // do this instead to start with the actual angle of the robot
         goalPos
       ));
+      System.out.println("wpilib trajectory done!");
 
+      System.out.println("wpilib path generating...");
       m_path = WPILibPath.genSwerveCommand(traj, m_driveSubsystem);
+      System.out.println("wpilib path done!");
       m_path.schedule(); 
     }
   }

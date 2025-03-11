@@ -14,7 +14,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -44,6 +43,7 @@ public final class WPILibPath {
     
     // Maybe these above controllers should be single constants used for all paths generated?
 
+    System.out.println("Making wpilib path command 1");
     // Handles the swerve trajectory stuff
     return new SwerveControllerCommand(
       trajectory,
@@ -58,6 +58,7 @@ public final class WPILibPath {
 
   // Quintic spline, for angles at all interior points
   public static Trajectory genTrajectory(List<Pose2d> points) {
+    System.out.println("Generating trajectory 1");
     return TrajectoryGenerator.generateTrajectory(points, trajConfig);
   }
 

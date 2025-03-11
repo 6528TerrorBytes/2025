@@ -33,6 +33,7 @@ import frc.robot.commands.BlinkinCommand;
 import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
 import frc.robot.commands.DriveToAprilTagAuto;
+import frc.robot.commands.DriveToAprilTagWPILib;
 import frc.robot.commands.move.AlgaeForkMove;
 import frc.robot.commands.move.ArmMove;
 import frc.robot.commands.move.ClimbDirectMove;
@@ -527,6 +528,12 @@ public class RobotContainer {
 
       AutoBuilder.pathfindToPose(goalPos, Constants.AprilTags.aprilTagDriveConstraints, 0).schedule();
     }));
+
+    // Test WPILib pathing
+    new JoystickButton(leftJoystick, 14).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+
+    // Test if button presses can still be sensed
+    new JoystickButton(leftJoystick, 15).onTrue(new InstantCommand(() -> System.out.println("i can read your button press!")));
     
     // ---- SCORE CORAL, ALL LEFT TRIGGER (2) ----
 
