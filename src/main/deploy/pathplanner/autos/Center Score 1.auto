@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.05
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armHigh"
+                  "name": "preL4"
                 }
               }
             ]
@@ -39,6 +39,12 @@
           "type": "named",
           "data": {
             "name": "dunkScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorZero"
           }
         }
       ]

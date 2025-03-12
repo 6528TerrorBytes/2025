@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.05
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armHigh"
+                  "name": "preL4"
                 }
               }
             ]
@@ -42,31 +42,32 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Right2 Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "tagPositionPickup"
+                  "name": "intakePosition"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "armIntakeSetup"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right2 Intake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -79,28 +80,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Right3 HumanToScore"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevatorZero"
-                }
-              }
-            ]
+            "pathName": "Right3 HumanToScore"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.0
           }
         },
         {
@@ -116,7 +104,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armHigh"
+                  "name": "preL4"
                 }
               }
             ]
@@ -126,6 +114,12 @@
           "type": "named",
           "data": {
             "name": "dunkScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorZero"
           }
         }
       ]

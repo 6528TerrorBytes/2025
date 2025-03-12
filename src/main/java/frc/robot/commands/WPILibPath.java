@@ -9,6 +9,7 @@ import java.util.List;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -65,5 +66,14 @@ public final class WPILibPath {
   // Cubic spline, angles at interior points automatically determined
   public static Trajectory genTrajectory(Pose2d starting, List<Translation2d> points, Pose2d ending) {
     return TrajectoryGenerator.generateTrajectory(starting, points, ending, trajConfig);
+  }
+
+  // Run once after robot initialization
+  // This loads the trajectory generator into memory, eliminating the initial delay of generating the first trajectory
+  public static Trajectory warmupTrajectoryGeneration() {
+    return genTrajectory(List.of(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      new Pose2d(1, 1, Rotation2d.fromDegrees(90))
+    ));
   }
 }

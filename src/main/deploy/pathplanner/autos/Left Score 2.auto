@@ -13,94 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "tagPositionRight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "armHigh"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "dunkScoreL4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left2 Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "tagPositionPickup"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "armIntakeSetup"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "runIntakeMotor"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left3 HumanToScore"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevatorZero"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
+            "waitTime": 0.05
           }
         },
         {
@@ -116,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armHigh"
+                  "name": "preL4"
                 }
               }
             ]
@@ -126,6 +39,87 @@
           "type": "named",
           "data": {
             "name": "dunkScoreL4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intakePosition"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Left2 Intake"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "runIntakeMotor"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left3 HumanToScore"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "tagPositionLeft"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "preL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "dunkScoreL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorZero"
           }
         }
       ]

@@ -58,7 +58,7 @@ public final class Constants {
 
     // Intake motor stop delays
     public static final double m_intakeMotorStopDelayPickup = 0;
-    public static final double m_intakeMotorStopDelayDunk = 0.2;
+    public static final double m_intakeMotorStopDelayDunk = 0; // used to be 0.2
   }
 
   public static final class AprilTags {

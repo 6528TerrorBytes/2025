@@ -34,6 +34,7 @@ import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
 import frc.robot.commands.DriveToAprilTagAuto;
 import frc.robot.commands.DriveToAprilTagWPILib;
+import frc.robot.commands.WPILibPath;
 import frc.robot.commands.move.AlgaeForkMove;
 import frc.robot.commands.move.ArmMove;
 import frc.robot.commands.move.ClimbDirectMove;
@@ -96,6 +97,8 @@ public class RobotContainer {
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
     m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmIntake));
+
+    WPILibPath.warmupTrajectoryGeneration();
   }
 
   public void setDriveCommand() {
@@ -447,7 +450,7 @@ public class RobotContainer {
     new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
     // Drive to intake and pickup
-    new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+    // new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
     // REZERO the bot right button thingy
     new JoystickButton(rightJoystick, 4).whileTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
@@ -602,15 +605,14 @@ public class RobotContainer {
     // Register commands used in Pathplanner autos
 
     // Auto moves
-    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
-    NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTagAuto(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+    // NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
 
     // Arm/elevator/intake motors
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
-    NamedCommands.registerCommand("elevatorZero", new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
     NamedCommands.registerCommand("armIntakeSetup", new ParallelCommandGroup( // moves elevator and arm to intake position
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
@@ -618,7 +620,20 @@ public class RobotContainer {
     NamedCommands.registerCommand("runIntakeMotor", new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
     // Scoring
-    NamedCommands.registerCommand("dunkScoreL4", c_dunkScore);
+    NamedCommands.registerCommand("preL4", new ParallelCommandGroup(
+      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+    ));
+
+    NamedCommands.registerCommand("dunkScoreL4", new SequentialCommandGroup(
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal),
+      new ParallelCommandGroup(
+        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true),
+        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
+      )
+    ));
+
+    NamedCommands.registerCommand("intakePosition", new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
   }
 
   private void setupPathplannerSelector() {
