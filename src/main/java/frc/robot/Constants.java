@@ -21,12 +21,13 @@ public final class Constants {
   public static final class Setpoints {
     // Elevator setpoints
     public static final double elevatorZero = 0.1;
-    public static final double elevatorScoreLow = 0.5;
-    public static final double elevatorScoreMiddle = 1.325;
+    public static final double elevatorScoreLow = 0.45; // L2
+    public static final double elevatorScoreMiddle = 1.275; // L3
     public static final double elevatorIntake = 2.338;
     public static final double elevatorGrabLow = 1.9;
     public static final double elevatorGrabHigh = 4.5;
-    public static final double elevatorHigh = 6.2;
+    public static final double elevatorPickupMoveUp = 1.05; // distance it moves up for picking up algae from the reef
+    public static final double elevatorHigh = 6.2; // L4
 
     public static final double elevatorAlgaeFlapMovePos = 1;
 
@@ -35,6 +36,7 @@ public final class Constants {
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
     
     // Arm setpoint angles
+    public static final double armAngleInitial = armAngleHorizontal - 95;
     public static final double armAngleStore = armAngleHorizontal - 107;
     public static final double armAngleL2 = armAngleHorizontal + 30;
     public static final double armAngleL1Stage1 = armAngleHorizontal - 30;
@@ -57,7 +59,7 @@ public final class Constants {
     public static final double tailArmUp = tailArmHorizontal + 90;
 
     // Intake motor stop delays
-    public static final double m_intakeMotorStopDelayPickup = 0;
+    public static final double m_intakeMotorStopDelayPickup = 0.2;
     public static final double m_intakeMotorStopDelayDunk = 0; // used to be 0.2
   }
 
@@ -71,16 +73,16 @@ public final class Constants {
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
     public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.56); // 0.148
     public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.56);
-    public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
-    public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
+    public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62 + 0.0375);
+    public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62 + 0.0375);
     
     public static final Translation2d coralOffsetCentered = new Translation2d(-0.06, 0.46);
 
     public static final double coralXTagOffset = -0.08;
 
-    public static final Translation2d coralCollectOffset = new Translation2d(0, 0.515); // 0.035
+    public static final Translation2d coralCollectOffset = new Translation2d(0.06, 0.515); // 0.035
 
-    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(1, 1, 4 * Math.PI, 4 * Math.PI);
+    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(0.9, 0.9, 2 * Math.PI, 4 * Math.PI);
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
 

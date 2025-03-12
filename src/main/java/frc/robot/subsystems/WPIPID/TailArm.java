@@ -17,7 +17,7 @@ public class TailArm extends WPIArm {
     );
     
     enable();
-    setGoal(Constants.Setpoints.tailArmIntake);
+    setGoal(Constants.Setpoints.tailArmPreintake);
   }
 
   @Override

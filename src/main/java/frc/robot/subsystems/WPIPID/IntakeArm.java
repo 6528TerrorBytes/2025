@@ -16,7 +16,7 @@ public class IntakeArm extends WPIArm {
     );
 
     enable();
-    setGoal(Constants.Setpoints.armAngleStore);
+    setGoal(Constants.Setpoints.armAngleInitial);
   }
 
   @Override

@@ -13,7 +13,7 @@ public class IntakeMove extends Command {
   private final IntakeMotor m_intakeMotor;
   private final CoralDetector m_coralDetector;
 
-  private boolean m_currentDetected;
+  private boolean m_startDetected;
 
   private double m_stopDelay; // seconds delay between the beam state changing and the intake motor stopping
   private double m_stopTime;
@@ -24,6 +24,7 @@ public class IntakeMove extends Command {
     m_intakeMotor = intakeMotor;
     m_coralDetector = coralDetector;
     m_stopDelay = stopDelay;
+    m_stopTime = 0;
     m_reverse = reverse;
 
     addRequirements(m_intakeMotor);
@@ -32,7 +33,7 @@ public class IntakeMove extends Command {
   @Override
   public void initialize() {
     m_stopTime = 0;
-    m_currentDetected = m_coralDetector.detected();
+    m_startDetected = m_coralDetector.detected();
 
     if (m_reverse) {
       m_intakeMotor.onBackwards();
@@ -45,7 +46,7 @@ public class IntakeMove extends Command {
   public void execute() {
     if (m_stopTime != 0) return;
 
-    if (!m_coralDetector.detected() && m_currentDetected) { // beam status went from detected to not (coral left the beam break)
+    if (m_coralDetector.detected() != m_startDetected) { // beam status changed
       m_stopTime = Utility.getTime() + m_stopDelay; // set the stop time
     }
   }

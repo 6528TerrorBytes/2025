@@ -13,7 +13,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.05
+            "waitTime": 0.0
           }
         },
         {
@@ -52,22 +52,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Right2 Intake"
-                      }
-                    }
-                  ]
+                  "pathName": "Right2 Intake"
                 }
               }
             ]

@@ -96,9 +96,9 @@ public class RobotContainer {
     setupPathplannerSelector();
 
     m_blinkin.setDefaultCommand(m_blinkinCommand);
-    m_tailArm.setDefaultCommand(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmIntake));
 
     WPILibPath.warmupTrajectoryGeneration();
+    System.out.println("trajectory warmup finished");
   }
 
   public void setDriveCommand() {
@@ -188,7 +188,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + Constants.Setpoints.elevatorPickupMoveUp)
       )
     ));
 
@@ -376,7 +376,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + Constants.Setpoints.elevatorPickupMoveUp)
       )
     ));
 
@@ -393,7 +393,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + Constants.Setpoints.elevatorPickupMoveUp)
       )
     ));
 
@@ -436,7 +436,7 @@ public class RobotContainer {
   private void configureOFFICIALBindings() {
     // ---- DRIVER BINDINGS ----
 
-    // we drunk driving bois
+    // we drunk driving bois :tada:
     
     // Drive to score coral, left and right sides, L3 or L4
     new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
@@ -446,11 +446,12 @@ public class RobotContainer {
     new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
     
-    // Drive to score L1, centered
-    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    // Drive to centered for algae
+    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, 0, "limelight-two", false));
     
     // Drive to intake and pickup
     // new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
+    new JoystickButton(leftJoystick, 4).whileTrue(new DriveSpeedChange(0.5));
 
     // REZERO the bot right button thingy
     new JoystickButton(rightJoystick, 4).whileTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
@@ -497,15 +498,21 @@ public class RobotContainer {
 
     // Score L1 button A
     new JoystickMultiAnalogButton(otherJoystick, 2, 0.3, 1).whileTrue(new SequentialCommandGroup(
+      // new ParallelCommandGroup(
+      //   new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+      //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL1Stage1)
+      // ),
+      // new ParallelCommandGroup(
+      //   new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true),
+      //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL1Stage2)
+      // ),
+      // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
+
       new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
         new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL1Stage1)
       ),
-      new ParallelCommandGroup(
-        new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL1Stage2)
-      ),
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
+      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false)
     ));
 
 
@@ -525,7 +532,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + Constants.Setpoints.elevatorPickupMoveUp)
       )
     ));
 
@@ -542,7 +549,7 @@ public class RobotContainer {
 
       new SequentialCommandGroup(
         new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + 0.8)
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + Constants.Setpoints.elevatorPickupMoveUp)
       )
     ));
 
@@ -613,13 +620,14 @@ public class RobotContainer {
 
     // Arm/elevator/intake motors
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
+    NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
     NamedCommands.registerCommand("armIntakeSetup", new ParallelCommandGroup( // moves elevator and arm to intake position
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
     ));
     NamedCommands.registerCommand("runIntakeMotor", new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
-    // Scoring
+    // Scoring 
     NamedCommands.registerCommand("preL4", new ParallelCommandGroup(
       new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
       new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
@@ -633,7 +641,16 @@ public class RobotContainer {
       )
     ));
 
-    NamedCommands.registerCommand("intakePosition", new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
+    NamedCommands.registerCommand("elevatorZero", new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
+
+    NamedCommands.registerCommand("intakePosition", new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
+        new TailArmMove(m_tailArm, Constants.Setpoints.tailArmPreintake)
+      ),
+      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleStore),
+      new TailArmMove(m_tailArm, Constants.Setpoints.tailArmIntake)
+    ));
   }
 
   private void setupPathplannerSelector() {

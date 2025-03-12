@@ -13,11 +13,11 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.05
+            "waitTime": 0.0
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
