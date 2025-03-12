@@ -182,8 +182,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Use Limelights to adjust odometry to find more accurate field position
     // UNCOMMENT FOR INCORPORATING VISION POSITION TO ODOMETRY
-    incorporateVisionPose("limelight-two");
-    incorporateVisionPose("limelight-four");
+    // incorporateVisionPose("limelight-two");
+    // incorporateVisionPose("limelight-four");
     
     // Update SmartDashboard field position
     // m_field.setRobotPose(getPose());

@@ -30,6 +30,7 @@ public class DriveToAprilTagAuto extends DriveToAprilTag {
   @Override
   public void initialize() {
     m_path = null;
+    m_foundTag = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,7 +58,15 @@ public class DriveToAprilTagAuto extends DriveToAprilTag {
       // Create path from current robot position to the new position
 
       // Angle pointing towards goal from the starting position:
-      double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+
+      // double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      double angle;
+      if ((goalPos.getX() - robotPos.getX()) == 0) {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / 0.0001);
+        System.out.println("x dist is zero");
+      } else {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      }
 
       // ROTATIONS ARE PATH OF TRAVEL
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(

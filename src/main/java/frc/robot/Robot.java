@@ -34,6 +34,7 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     System.out.println("Hello World!");
+    // System.out.println("fuck yall :)");
 
     // Setup AdvantageKit:
     /* Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value

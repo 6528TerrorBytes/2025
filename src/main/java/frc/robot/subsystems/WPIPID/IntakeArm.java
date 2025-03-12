@@ -16,11 +16,11 @@ public class IntakeArm extends WPIArm {
     );
 
     enable();
-    setGoal(Constants.Setpoints.armAngleVerticalDown);
+    setGoal(Constants.Setpoints.armAngleStore);
   }
 
   @Override
   public double getAngleFromHorizontal(double encoderPos) {
-    return encoderPos - Constants.Setpoints.armAngleHorizontal - (Constants.Setpoints.armAngleAtRest - Constants.Setpoints.armAngleVerticalDown);
+    return encoderPos - Constants.Setpoints.armAngleHorizontal - (Constants.Setpoints.armAngleAtRest - Constants.Setpoints.armAngleStore);
   }
 }

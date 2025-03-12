@@ -25,6 +25,7 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
   @Override
   public void initialize() {
     m_path = null;
+    m_foundTag = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,7 +41,7 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
       System.out.println("found");
 
       m_foundTag = true;
-      Pose2d robotPos = m_driveSubsystem.getPose();
+      Pose2d robotPos = m_driveSubsystem.getPose(); // ** IF DOES NOT WORK, CHANGE THIS TO GET THE DIRECT ODOMETRY POSE? **
 
       Pose2d goalPos = calculateGoalPos(robotPos, m_posOffset, m_xOffset, m_limelightName, aprilTagID);
 
@@ -52,12 +53,20 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
       // Create path from current robot position to the new position
 
       // Angle pointing towards goal from the starting position:
-      double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      
+      // double angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      double angle;
+      if ((goalPos.getX() - robotPos.getX()) == 0) {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / 0.0001);
+        System.out.println("x dist is zero");
+      } else {
+        angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
+      }
 
       System.out.println("wpilib trajectory generating...");
       Trajectory traj = WPILibPath.genTrajectory(List.of(
         new Pose2d(robotPos.getTranslation(), Rotation2d.fromRadians(angle)), // starting pose with angle pointing towards goal
-        // robotPos, // do this instead to start with the actual angle of the robot
+        // robotPos, // do this instead to start with the direction of movement?
         goalPos
       ));
       System.out.println("wpilib trajectory done!");
@@ -75,8 +84,11 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
     System.out.println("ended start1");
     try {
       System.out.println("ended start inner");
+
       m_path.end(false);
       m_path.cancel();
+      m_driveSubsystem.setX();
+
       System.out.println("ended command not null");
     } catch (java.lang.NullPointerException e) {
       System.out.println("ended null");

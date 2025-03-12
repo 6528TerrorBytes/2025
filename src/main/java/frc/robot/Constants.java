@@ -35,11 +35,11 @@ public final class Constants {
     public static final double armAngleHorizontal = 125; // angle when it's perfectly horizontal
     
     // Arm setpoint angles
-    public static final double armAngleVerticalDown = armAngleHorizontal - 100;
+    public static final double armAngleStore = armAngleHorizontal - 107;
     public static final double armAngleL2 = armAngleHorizontal + 30;
     public static final double armAngleL1Stage1 = armAngleHorizontal - 30;
     public static final double armAngleL1Stage2 = armAngleHorizontal;
-    public static final double armAngleIntake = armAngleVerticalDown + 42;
+    public static final double armAngleIntake = armAngleStore + 47;
     public static final double armAngleMiddleHigh = armAngleHorizontal + 55;
     public static final double armAngleHigh = armAngleHorizontal + 80;
     public static final double armAngleHoldAlgae = armAngleHorizontal - 25;
@@ -47,14 +47,14 @@ public final class Constants {
     public static final double armElevatorMoveAngle = 52; // Arm needs to be greater than this angle before the elevator is allowed to move
 
     // Algae fork setpoint angles
-    public static final double algaeForkHorizontal = 119;
+    public static final double algaeForkHorizontal = 134;
     public static final double algaeForkZero = algaeForkHorizontal - 95;
 
     // Tail arm setpoint angles
-    public static final double tailArmHorizontal = 70;
-    public static final double tailArmScore = tailArmHorizontal + 40;
-    public static final double tailArmStartingAngle = tailArmHorizontal + 105;
-    public static final double tailArmDown = tailArmHorizontal - 35;
+    public static final double tailArmHorizontal = 96.5;
+    public static final double tailArmIntake = 77.5;
+    public static final double tailArmPreintake = tailArmIntake + 5;
+    public static final double tailArmUp = tailArmHorizontal + 90;
 
     // Intake motor stop delays
     public static final double m_intakeMotorStopDelayPickup = 0;
@@ -76,11 +76,11 @@ public final class Constants {
     
     public static final Translation2d coralOffsetCentered = new Translation2d(-0.06, 0.46);
 
-    public static final double coralXTagOffset = -0.04;
+    public static final double coralXTagOffset = -0.08;
 
     public static final Translation2d coralCollectOffset = new Translation2d(0, 0.515); // 0.035
 
-    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(1, 1, 1.5 * Math.PI, 2 * Math.PI);
+    public static final PathConstraints aprilTagDriveConstraints = new PathConstraints(1, 1, 4 * Math.PI, 4 * Math.PI);
 
     public static Map<Double, Double> aprilTagFaceAngles = new HashMap<Double, Double>();
 
@@ -181,17 +181,17 @@ public final class Constants {
     }
 
     public static final SparkMaxConfig tailArmConfig = new SparkMaxConfig();
-    public static final double tailArmTolerance = 5;
+    public static final double tailArmTolerance = 2;
 
     static {
       tailArmConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(30)
-        .inverted(true);
+        .inverted(false);
       tailArmConfig.absoluteEncoder
         .positionConversionFactor(360)
         .velocityConversionFactor(360 / 60)
-        .inverted(false);
+        .inverted(true);
     }
 
     public static final SparkMaxConfig outerClimbConfig = new SparkMaxConfig();

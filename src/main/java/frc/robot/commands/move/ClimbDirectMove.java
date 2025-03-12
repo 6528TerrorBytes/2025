@@ -33,7 +33,7 @@ public class ClimbDirectMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_motor.setPower(1);
+    m_motor.setPower(0.9);
   }
 
   // Called once the command ends or is interrupted.

@@ -43,8 +43,6 @@ public class SparkMoveRelative extends SubsystemBase {
   }
 
   public void setGoal(double position) {
-    System.out.println(position);
-    System.out.println(m_encoder.getPosition());
     m_goal = position;
     m_controller.setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
   }

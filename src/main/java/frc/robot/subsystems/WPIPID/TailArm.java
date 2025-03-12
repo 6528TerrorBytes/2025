@@ -11,13 +11,13 @@ public class TailArm extends WPIArm {
   public TailArm() {
     super(
       Constants.MotorIDs.tailArmID, Constants.MotorConfig.tailArmConfig, Constants.MotorConfig.tailArmTolerance,
-      200, 200,
-      0.1, 0, 0,
-      0, 0.35, 0
+      300, 300,
+      0.2, 0, 0,
+      0, 0, 0
     );
     
     enable();
-    setGoal(Constants.Setpoints.tailArmStartingAngle);
+    setGoal(Constants.Setpoints.tailArmIntake);
   }
 
   @Override

@@ -142,6 +142,7 @@ public class DriveToAprilTag extends Command {
       double angle;
       if ((goalPos.getX() - robotPos.getX()) == 0) {
         angle = Math.atan((goalPos.getY() - robotPos.getY()) / 0.0001);
+        System.out.println("x dist is zero");
       } else {
         angle = Math.atan((goalPos.getY() - robotPos.getY()) / (goalPos.getX() - robotPos.getX()));
       }
