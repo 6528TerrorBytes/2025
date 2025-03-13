@@ -24,7 +24,7 @@ public class DriveToAprilTagAuto extends DriveToAprilTag {
 
   /** Creates a new DriveToAprilTagAuto. */
   public DriveToAprilTagAuto(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation) {
-    super(driveSubsystem, posOffset, xOffset, limelightName, isPickupStation);
+    super(driveSubsystem, posOffset, xOffset, limelightName, isPickupStation, true);
   }
 
   @Override

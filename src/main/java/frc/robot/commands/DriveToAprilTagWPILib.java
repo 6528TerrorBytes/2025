@@ -18,8 +18,8 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
   Command m_path;
 
   /** Creates a new DriveToAprilTagAuto. */
-  public DriveToAprilTagWPILib(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation) {
-    super(driveSubsystem, posOffset, xOffset, limelightName, isPickupStation);
+  public DriveToAprilTagWPILib(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation, boolean addReq) {
+    super(driveSubsystem, posOffset, xOffset, limelightName, isPickupStation, addReq);
   }
 
   @Override

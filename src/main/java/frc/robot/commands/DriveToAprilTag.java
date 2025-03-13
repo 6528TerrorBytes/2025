@@ -32,7 +32,7 @@ public class DriveToAprilTag extends Command {
   protected boolean m_foundTag;
   // private Command m_path;
 
-  public DriveToAprilTag(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation) {
+  public DriveToAprilTag(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation, boolean addReq) {
     m_driveSubsystem = driveSubsystem;
     m_posOffset = posOffset;
     m_xOffset = xOffset;
@@ -40,7 +40,9 @@ public class DriveToAprilTag extends Command {
     m_limelightName = limelightName;
     m_isPickupStation = isPickupStation;
 
-    addRequirements(driveSubsystem); // Prevents from driving while the path is active
+    if (addReq) {
+      addRequirements(driveSubsystem); // Prevents from driving while the path is active
+    }
   }
 
   // Checking for the AprilTag ID corresponding to the current team color

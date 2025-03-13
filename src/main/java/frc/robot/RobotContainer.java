@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.BlinkinCommand;
+import frc.robot.commands.CancelDriveCommand;
 import frc.robot.commands.DriveSpeedChange;
 import frc.robot.commands.DriveToAprilTag;
 import frc.robot.commands.DriveToAprilTagAuto;
@@ -133,337 +134,31 @@ public class RobotContainer {
     );
   }
   
-  private void configureTESTBindings() {
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveSpeedChange(0.5));
-
-    // new JoystickButton(leftJoystick, 1).whileTrue(new ElevatorMove(m_elevator, 20));
-    // new JoystickButton(leftJoystick, 2).whileTrue(new ElevatorMove(m_elevator, 0));
-
-    // new JoystickButton(leftJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, false));
-    
-    // Reset gyro
-    // new JoystickButton(rightJoystick, 15).onTrue(new InstantCommand(() -> m_robotDrive.resetOdometry()));
-    new JoystickButton(rightJoystick, 16).onTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
-    // new JoystickButton(rightJoystick, 13).onTrue(new InstantCommand(() -> m_robotDrive.setX()));
-
-    // ELEVATOR
-    new JoystickButton(leftJoystick, 14).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh));
-    new JoystickButton(leftJoystick, 13).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh));
-    new JoystickButton(leftJoystick, 12).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake));
-    new JoystickButton(leftJoystick, 11).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
-    
-    // Zero elevator
-    // new JoystickButton(leftJoystick, 16).whileTrue(new InstantCommand(() -> m_elevator.zeroEncoder()));
-
-    // MANUAL ELEVATOR
-    new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(m_elevator.m_motor, 0.4));
-    new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(m_elevator.m_motor, -0.15));
-    new JoystickAnalogButton(leftJoystick, 3, 0.5, 1).whileTrue(new ElevatorMove(m_elevator, m_arm, m_elevator.getPos()));
-
-    // High shooting mockup automation
-    // new SequentialCommandGroup(
-    //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
-    //   new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorHigh),
-
-    //   // here: position the robot next to the reef properly
-    
-    //   new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal),
-      
-    //   new ParallelDeadlineGroup( // Shoot then pull arm back
-    //     new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
-    //     new IntakeMove(m_intakeMotor, m_coralDetector)
-    //   )
-    // );
-
-    // Algae 2nd level grab start position
-    new JoystickButton(leftJoystick, 2).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
-      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
-    ));
-
-    // Algae 2nd level grab and lift up
-    new JoystickButton(leftJoystick, 3).whileTrue(new ParallelCommandGroup(
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
-
-      new SequentialCommandGroup(
-        new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + Constants.Setpoints.elevatorPickupMoveUp)
-      )
-    ));
-
-    // Coral intake arm + elevator position
-    new JoystickButton(leftJoystick, 4).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
-    ));
-
-    // Dunk the coral L4
-    new JoystickButton(rightJoystick, 2).whileTrue(c_dunkScore);
-
-    // Score L3
-    new JoystickButton(rightJoystick, 3).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
-      ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
-      )
-    ));
-
-    // Score L2
-    new JoystickButton(rightJoystick, 4).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL2)
-      ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
-      )
-    ));
-
-    // Drive to score coral, left and right sides
-    new JoystickButton(otherJoystick, 5).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(otherJoystick, 6).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    // new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, "limelight-two", false));
-
-    // Drive to intake and pickup
-    new JoystickButton(rightJoystick, 14).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
-
-    // ARM
-    new JoystickButton(leftJoystick, 5).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleStore));
-    new JoystickButton(leftJoystick, 6).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake));
-    new JoystickButton(leftJoystick, 7).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
-    new JoystickButton(leftJoystick, 8).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHorizontal));
-    new JoystickButton(leftJoystick, 9).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae));
-
-    // ALGAE FORK
-    new JoystickButton(rightJoystick, 5).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero));
-    new JoystickButton(rightJoystick, 6).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 25));
-    new JoystickButton(rightJoystick, 7).whileTrue(new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal));
-
-    // TAIL ARM
-    new JoystickButton(rightJoystick, 10).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmHorizontal));
-    // new JoystickButton(rightJoystick, 9).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmScore));
-    // new JoystickButton(rightJoystick, 8).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmStartingAngle));
-
-
-    // Tail Intake
-    // new JoystickAnalogButton(otherJoystick, 3, 0.5, 1).whileTrue(new TailIntakeMove(m_tailIntake, 1));
-    // new JoystickAnalogButton(otherJoystick, 4, 0.5, 1).whileTrue(new TailIntakeMove(m_tailIntake, -1));
-
-
-    // CLIMB SETPOINT
-    // new JoystickButton(otherJoystick, 1).whileTrue(new ClimbMove(m_climb, 29));
-    // new JoystickButton(otherJoystick, 2).whileTrue(new ClimbMove(m_climb, 145));
-
-    // CLIMB DIRECT MOVE
-    new JoystickButton(otherJoystick, 1).whileFalse(new ParallelCommandGroup(
-      new ClimbDirectMove(m_climb, true, 135),
-      new ClimbDirectMove(m_climb, false, 160)
-    ));
-
-    // INTAKE
-    new JoystickButton(rightJoystick, 1).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
-    
-    // MANUAL CLIMB
-    // new JoystickButton(otherJoystick, 3).whileTrue(new MotorMoveTesting(climbinner, 0.35));
-    // new JoystickButton(otherJoystick, 4).whileTrue(new MotorMoveTesting(climbinner, -0.35));
-
-    // new JoystickButton(otherJoystick, 7).whileTrue(new MotorMoveTesting(climbouter, 0.35));
-    // new JoystickButton(otherJoystick, 8).whileTrue(new MotorMoveTesting(climbouter, -0.35));
-  }
-
-  private void configureOLDOFFICIALBindings() {
-    // ---- DRIVER BINDINGS ----
-    
-    // Drive to score coral, left and right sides, L3 or L4
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    
-    // Drive to score L2
-    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    
-    // Drive to score L1, centered
-    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralOffsetCentered, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    
-    // Drive to intake and pickup
-    new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTag(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
-
-
-    // ---- SECONDARY SCORING ----
-
-    // Score L4 right trigger
-    new JoystickAnalogButton(otherJoystick, 3, 0.3, 1).whileTrue(c_dunkScore);
-  
-    // Score L3 right bumper
-    new JoystickButton(otherJoystick, 6).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreMiddle),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleMiddleHigh)
-      ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
-      )
-    ));
-
-    // Score L2 button Y
-    new JoystickButton(otherJoystick, 4).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleL2)
-      ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
-      new ParallelCommandGroup(
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
-      )
-    ));
-
-    // Score L1 button A
-    new JoystickButton(otherJoystick, 4).whileTrue(new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorScoreLow),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
-      ),
-      new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, false),
-      new ParallelCommandGroup(
-        // new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero),
-        new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh)
-      )
-    ));
-
-    // Intake position left trigger
-    new JoystickAnalogButton(otherJoystick, 2, 0.3, 1).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
-    ));
-
-
-    // ---- SECONDARY OTHER ----
-
-    // INTAKE PICKUP left bumper
-    new JoystickButton(otherJoystick, 5).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
-
-
-    // ---- SECONDARY ALGAE ----
-
-    // ELEVATOR DOWN button X
-    new JoystickButton(otherJoystick, 3).whileTrue(new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero));
-    // ARM HIGH button B
-    new JoystickButton(otherJoystick, 2).whileTrue(new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
-
-    // PICKUP ALGAE HIGH left joystick down (hold)
-    new JoystickAnalogButton(otherJoystick, 1, 0.3, 1).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
-      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
-    ));
-
-    // BRING UP ALGAE HIGH left joystick up (hold)
-    new JoystickAnalogButton(otherJoystick, 1, -1, -0.3).whileTrue(new ParallelCommandGroup(
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
-
-      new SequentialCommandGroup(
-        new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabHigh + Constants.Setpoints.elevatorPickupMoveUp)
-      )
-    ));
-
-    // PICKUP ALGAE LOW right joystick down (hold)
-    new JoystickAnalogButton(otherJoystick, 5, 0.3, 1).whileTrue(new ParallelCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh),
-      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkHorizontal - 5)
-    ));
-
-    // BRING UP ALGAE LOW right joystick up (hold)
-    new JoystickAnalogButton(otherJoystick, 5, -1, -0.3).whileTrue(new ParallelCommandGroup(
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHoldAlgae),
-
-      new SequentialCommandGroup(
-        new WaitCommand(0.35),
-        new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorGrabLow + Constants.Setpoints.elevatorPickupMoveUp)
-      )
-    ));
-
-
-    // RESET ALGAE FLAP back button
-    new JoystickButton(otherJoystick, 7).whileTrue(new SequentialCommandGroup(
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorAlgaeFlapMovePos + 2 * Constants.MotorConfig.elevatorTolerance),
-      new AlgaeForkMove(m_algaeFork, m_elevator, Constants.Setpoints.algaeForkZero),
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorZero)
-    ));
-
-
-    // ---- SECONDARY TAIL ARM ----
-
-    // TAIL ARM DOWN + INTAKE -- down DPAD
-    // new POVButton(otherJoystick, 180).whileTrue(new ParallelCommandGroup(
-    //   new TailArmMove(m_tailArm, Constants.Setpoints.tailArmDown),
-    //   new TailIntakeMove(m_tailIntake, -1))
-    // );
-
-    // POVs -- https://docs.wpilib.org/en/stable/docs/software/basic-programming/joystick.html#pov
-
-    // TAIL ARM SCORE POS -- up DPAD
-    // new POVButton(otherJoystick, 0).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.tailArmScore));
-
-    // TAIL ARM START POS -- left DPAD
-    // new POVButton(otherJoystick, 270).whileTrue(new TailArmMove(m_tailArm, Constants.Setpoints.));
-
-    // TAIL ARM SCORE INTAKE -- options button
-    // new JoystickButton(otherJoystick, 8).whileTrue(new TailIntakeMove(m_tailIntake, 1));
-
-
-    // ---- CLIMB ----
-    new JoystickButton(otherJoystick, 10).whileFalse(new ParallelCommandGroup(
-      new ClimbDirectMove(m_climb, true, 135),
-      new ClimbDirectMove(m_climb, false, 160)
-    ));
-  }
-
   private void configureOFFICIALBindings() {
     // ---- DRIVER BINDINGS ----
 
     // we drunk driving bois :tada:
     
     // Drive to score coral, left and right sides, L3 or L4
-    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(leftJoystick, 1).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(rightJoystick, 1).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
     
     // Drive to score L2
-    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    new JoystickButton(leftJoystick, 2).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(rightJoystick, 2).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
     
     // Drive to centered for algae
-    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, 0, "limelight-two", false));
+    new JoystickButton(rightJoystick, 3).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, 0, "limelight-two", false, true));
     
     // Drive to intake and pickup
     // new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
-    new JoystickButton(leftJoystick, 4).whileTrue(new DriveSpeedChange(0.5));
+    new JoystickButton(leftJoystick, 4).whileTrue(new CancelDriveCommand(m_robotDrive));
 
     // REZERO the bot right button thingy
     new JoystickButton(rightJoystick, 4).whileTrue(new InstantCommand(() -> m_robotDrive.resetGyro()));
     
     // Reverse intake
     new JoystickButton(leftJoystick, 3).whileTrue(new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayDunk, true));
-
-    // Test WPILib pathing
-    new JoystickButton(leftJoystick, 14).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-
-    // Test if button presses can still be sensed
-    new JoystickButton(leftJoystick, 15).onTrue(new InstantCommand(() -> System.out.println("i can read your button press!")));
     
     // ---- SCORE CORAL, ALL LEFT TRIGGER (2) ----
 
@@ -612,8 +307,8 @@ public class RobotContainer {
     // Register commands used in Pathplanner autos
 
     // Auto moves
-    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
-    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false));
+    NamedCommands.registerCommand("tagPositionLeft", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false, false));
+    NamedCommands.registerCommand("tagPositionRight", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false, false));
     
     // NamedCommands.registerCommand("tagPositionPickup", new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
 
