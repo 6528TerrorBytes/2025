@@ -24,8 +24,8 @@ public class IntakeMove extends Command {
     m_intakeMotor = intakeMotor;
     m_coralDetector = coralDetector;
     m_stopDelay = stopDelay;
-    m_stopTime = 0;
     m_reverse = reverse;
+    m_stopTime = 0;
 
     addRequirements(m_intakeMotor);
   }

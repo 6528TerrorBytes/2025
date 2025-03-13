@@ -621,10 +621,6 @@ public class RobotContainer {
     // Arm/elevator/intake motors
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
     NamedCommands.registerCommand("armHigh", new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleHigh));
-    NamedCommands.registerCommand("armIntakeSetup", new ParallelCommandGroup( // moves elevator and arm to intake position
-      new ElevatorMove(m_elevator, m_arm, Constants.Setpoints.elevatorIntake),
-      new ArmMove(m_arm, m_elevator, Constants.Setpoints.armAngleIntake)
-    ));
     NamedCommands.registerCommand("runIntakeMotor", new IntakeMove(m_intakeMotor, m_coralDetector, Constants.Setpoints.m_intakeMotorStopDelayPickup, false));
 
     // Scoring 
