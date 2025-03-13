@@ -63,8 +63,8 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    PathfindingCommand.warmupCommand().schedule(); // load to be quicker on first run
-    FollowPathCommand.warmupCommand().schedule();
+    // PathfindingCommand.warmupCommand().schedule(); // load to be quicker on first run
+    // FollowPathCommand.warmupCommand().schedule();
 
     // Limelights for dashboard
     // HttpCamera ll2 = new HttpCamera("limelight-two", "10.65.28.11:5800", HttpCameraKind.kMJPGStreamer);
