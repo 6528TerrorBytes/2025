@@ -46,15 +46,27 @@ public final class WPILibPath {
 
     System.out.println("Making wpilib path command 1");
     // Handles the swerve trajectory stuff
-    return new SwerveControllerCommand(
-      trajectory,
-      robotDrive::getPose,
-      DriveConstants.kDriveKinematics,
-      xController, yController,
-      thetaController,
-      robotDrive::setModuleStates,
-      (addReq ? robotDrive : null)
-    );
+
+    if (addReq) {
+      return new SwerveControllerCommand(
+        trajectory,
+        robotDrive::getPose,
+        DriveConstants.kDriveKinematics,
+        xController, yController,
+        thetaController,
+        robotDrive::setModuleStates,
+        robotDrive
+      );
+    } else {
+      return new SwerveControllerCommand(
+        trajectory,
+        robotDrive::getPose,
+        DriveConstants.kDriveKinematics,
+        xController, yController,
+        thetaController,
+        robotDrive::setModuleStates
+      );
+    }
   }
 
   // Quintic spline, for angles at all interior points
