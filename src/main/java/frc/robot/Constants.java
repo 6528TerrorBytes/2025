@@ -50,12 +50,12 @@ public final class Constants {
 
     // Algae fork setpoint angles
     public static final double algaeForkHorizontal = 134;
-    public static final double algaeForkZero = algaeForkHorizontal - 95;
+    public static final double algaeForkZero = algaeForkHorizontal - 98;
 
     // Tail arm setpoint angles
     public static final double tailArmHorizontal = 96.5;
     public static final double tailArmIntake = 77.5;
-    public static final double tailArmPreintake = tailArmIntake + 5;
+    public static final double tailArmPreintake = tailArmIntake + 8;
     public static final double tailArmUp = tailArmHorizontal + 90;
 
     // Intake motor stop delays
@@ -71,8 +71,8 @@ public final class Constants {
     public static final double[] stationRedTags =  { 1, 2 };
 
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
-    public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.56); // 0.148
-    public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.56);
+    public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.545); // 0.148
+    public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.545);
     public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62 + 0.0375);
     public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62 + 0.0375);
     

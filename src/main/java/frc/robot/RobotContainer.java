@@ -140,15 +140,15 @@ public class RobotContainer {
     // we drunk driving bois :tada:
     
     // Drive to score coral, left and right sides, L3 or L4
-    new JoystickButton(leftJoystick, 1).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
-    new JoystickButton(rightJoystick, 1).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(leftJoystick, 1).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeft, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(rightJoystick, 1).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRight, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
     
     // Drive to score L2
-    new JoystickButton(leftJoystick, 2).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
-    new JoystickButton(rightJoystick, 2).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(leftJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetLeftLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
+    new JoystickButton(rightJoystick, 2).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetRightLow, Constants.AprilTags.coralXTagOffset, "limelight-two", false, true));
     
     // Drive to centered for algae
-    new JoystickButton(rightJoystick, 3).onTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, 0, "limelight-two", false, true));
+    new JoystickButton(rightJoystick, 3).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralOffsetCentered, 0, "limelight-two", false, true));
     
     // Drive to intake and pickup
     // new JoystickButton(leftJoystick, 4).whileTrue(new DriveToAprilTagWPILib(m_robotDrive, Constants.AprilTags.coralCollectOffset, 0, "limelight-four", true));
@@ -285,8 +285,8 @@ public class RobotContainer {
       new TailArmMove(m_tailArm, Constants.Setpoints.tailArmUp)
     ));
 
-    // CLIMB button, put on the driver joysticks!
-    new JoystickButton(leftJoystick, 6).whileFalse(new ParallelCommandGroup(
+    // CLIMB button
+    new JoystickMultiButton(otherJoystick, 6, 1).whileFalse(new ParallelCommandGroup(
       new ClimbDirectMove(m_climb, true, 180),
       new ClimbDirectMove(m_climb, false, 160)
     ));

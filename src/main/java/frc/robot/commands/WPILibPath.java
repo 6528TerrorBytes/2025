@@ -34,7 +34,7 @@ public final class WPILibPath {
     Constants.AprilTags.aprilTagDriveConstraints.maxAngularAccelerationRadPerSecSq()
   );
 
-  public static SwerveControllerCommand genSwerveCommand(Trajectory trajectory, DriveSubsystem robotDrive) {
+  public static SwerveControllerCommand genSwerveCommand(Trajectory trajectory, DriveSubsystem robotDrive, boolean addReq) {
     // PID controllers used for following the trajectory (correcting errors)
     PIDController xController = new PIDController(1, 0, 0);
     PIDController yController = new PIDController(1, 0, 0);
@@ -53,7 +53,7 @@ public final class WPILibPath {
       xController, yController,
       thetaController,
       robotDrive::setModuleStates,
-      robotDrive
+      (addReq ? robotDrive : null)
     );
   }
 

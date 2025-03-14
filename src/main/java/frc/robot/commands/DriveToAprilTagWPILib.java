@@ -15,11 +15,13 @@ import frc.robot.subsystems.drive.DriveSubsystem;
 
 // Overrides isFinished and end, has a bug where the robot will sometimes randomly die upon finishing the path in teleop (???)
 public class DriveToAprilTagWPILib extends DriveToAprilTag {
-  Command m_path;
+  private Command m_path;
+  private boolean m_addReq;
 
   /** Creates a new DriveToAprilTagAuto. */
   public DriveToAprilTagWPILib(DriveSubsystem driveSubsystem, Translation2d posOffset, double xOffset, String limelightName, boolean isPickupStation, boolean addReq) {
     super(driveSubsystem, posOffset, xOffset, limelightName, isPickupStation, addReq);
+    m_addReq = addReq;
   }
 
   @Override
@@ -72,7 +74,7 @@ public class DriveToAprilTagWPILib extends DriveToAprilTag {
       System.out.println("wpilib trajectory done!");
 
       System.out.println("wpilib path generating...");
-      m_path = WPILibPath.genSwerveCommand(traj, m_driveSubsystem);
+      m_path = WPILibPath.genSwerveCommand(traj, m_driveSubsystem, m_addReq);
       System.out.println("wpilib path done!");
       m_path.schedule(); 
     }

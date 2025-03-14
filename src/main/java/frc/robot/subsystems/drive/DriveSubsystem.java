@@ -133,8 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
         new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
       ),
       config,
-      Utility::teamColorIsRed//,
-      // this
+      Utility::teamColorIsRed,
+      this
     );
     
     // SmartDashboard.putData("field", m_field);

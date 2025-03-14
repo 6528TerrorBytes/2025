@@ -15,6 +15,9 @@ public class AlgaeFork extends WPIArm {
       0.12, 0, 0,
       0, 0, 0
     );
+
+    enable();
+    setGoal(Constants.Setpoints.algaeForkZero);
   }
 
   @Override
