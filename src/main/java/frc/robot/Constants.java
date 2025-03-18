@@ -73,8 +73,8 @@ public final class Constants {
     // X is horizontal distance, Y is distance out from coral aprilTag -- half of bot width (bumpers included)
     public static final Translation2d coralOffsetRight = new Translation2d(0.147, 0.545); // 0.148
     public static final Translation2d coralOffsetLeft = new Translation2d(-0.147, 0.545);
-    public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62 + 0.0375);
-    public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62 + 0.0375);
+    public static final Translation2d coralOffsetRightLow = new Translation2d(0.147, 0.62);
+    public static final Translation2d coralOffsetLeftLow = new Translation2d(-0.147, 0.62);
     
     public static final Translation2d coralOffsetCentered = new Translation2d(-0.06, 0.46);
 
@@ -272,7 +272,7 @@ public final class Constants {
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
-    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+    public static final double kBackRightChassisAngularOffset = -Math.PI / 2;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
